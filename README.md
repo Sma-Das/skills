@@ -26,6 +26,19 @@ npx skills add Sma-Das/skills --skill '*'
 npx skills add Sma-Das/skills --skill interface-polish
 ```
 
+### Xyne style
+
+[xyne-style](skills/xyne-style/SKILL.md) restyles a product or marketing UI in the design language of [xyne.ai](https://xyne.ai/): dashed column rules on a 2/4/6 column grid, one coral-red used for fills and marks, a wide-set highlight word in each heading, Geist Mono uppercase labels, flat tiles on a cool grey band, and pointer-reactive dash illustrations. It ships tokens and components ([xyne.css](skills/xyne-style/assets/xyne.css)), a dash-field hero script, six dash glyphs, a derived dark theme, and a specimen page. The source page fails WCAG AA in several places, so the tokens keep the vivid red for fills and large text and use a darker red for small text. `data-fidelity="exact"` restores the original values. The skill applies the visual language to your own product. It doesn't copy Xyne's logo, product names, or copy.
+
+```sh
+npx skills add Sma-Das/skills --skill xyne-style
+```
+
+| Light | Dark |
+| --- | --- |
+| ![Xyne style specimen hero, light](skills/xyne-style/assets/specimen-light.png) | ![Xyne style specimen hero, dark](skills/xyne-style/assets/specimen-dark.png) |
+| ![Xyne style feature tiles, light](skills/xyne-style/assets/cards-light.png) | ![Xyne style feature tiles, dark](skills/xyne-style/assets/cards-dark.png) |
+
 ### Hairline
 
 The Hairline family provides flat, typography-led interfaces, a small Go + Svelte stack, hand-built SVG charts, and restrained motion. Use its skills individually or together.
@@ -53,6 +66,7 @@ The skills work with agents that support the [Agent Skills format](https://agent
 - “Use hairline-stack to scaffold a Go and Svelte app for project planning.”
 - “Use hairline-charts to show monthly totals and a running total.”
 - “Use hairline-motion to make this drawer interruptible and respect reduced motion.”
+- “Use xyne-style to restyle this landing page and keep our logo and copy.”
 - “Use interface-polish to improve this app's typography, controls, and narrow-pane behavior without changing its visual identity.”
 
 Bright, saturated color recommendations cover copper-orange, sky blue, leaf green, red-coral, gold, violet, and monochrome chrome with vivid categorical colors. Dark and light themes share semantic tokens; a generator creates custom palettes and checks contrast. The style does not require black and bronze.
@@ -72,7 +86,7 @@ Generated, fictional data only.
 | ![Hairline UI, dark theme](skills/hairline-ui/assets/specimen-dark.png) | ![Hairline UI, light theme](skills/hairline-ui/assets/specimen-light.png) |
 | ![SVG charts, dark theme](skills/hairline-charts/assets/specimen-dark.png) | ![SVG charts, light theme](skills/hairline-charts/assets/specimen-light.png) |
 
-The interactive specimens use ES modules and must be served over HTTP. Serve the `skills/` directory on an address appropriate for your environment, then open `hairline-ui/assets/specimen.html`, `hairline-charts/assets/specimen.html`, or `hairline-motion/assets/demo.html`. Keep sibling skill folders together for their relative asset imports.
+The interactive specimens use ES modules and must be served over HTTP. Serve the `skills/` directory on an address appropriate for your environment, then open `hairline-ui/assets/specimen.html`, `hairline-charts/assets/specimen.html`, `hairline-motion/assets/demo.html`, or `xyne-style/assets/specimen.html`. Keep sibling skill folders together for their relative asset imports.
 
 ## Development
 
