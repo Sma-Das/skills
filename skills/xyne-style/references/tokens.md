@@ -66,6 +66,30 @@ grid-template-columns:
 
 The grid has no column gap. Spacing between cards comes from a 2.5rem end margin on each card.
 
+## Textures
+
+| Texture | Value | Used on |
+| --- | --- | --- |
+| Ink hatch | `repeating-linear-gradient(-60deg, rgba(28,30,31,.09) 0 .66px, transparent 0 6px)` | Layer headers |
+| Brand hatch | same pattern at `rgba(255,79,79,.16)` | The highlighted layer |
+| Night hatch | same pattern at `rgba(255,255,255,.06)` | Cross-cutting strip on the dark band |
+| Brand node | 5% brand on white with an inset 1px border at brand 35% | Highlighted diagram nodes |
+| Group outline | 1px dashed, ink 25% | A system boundary, with a mono label on the line |
+| Stream | 2px rail at 22% of `currentColor`, plus a 60%-tall pulse `linear-gradient(transparent, currentColor 50%, transparent)`, `drop-shadow(0 0 3px)` | Connectors, animated `background-position` from 250% to −150% over 1.8s ease-in-out, holding for the last 30% |
+| Float shadow | `0 12px 28px rgba(28,30,31,.1)` (the source uses an SVG `feDropShadow`, dy 12, stdDeviation 14) | The stat card over a chart |
+| Fade | `linear-gradient(transparent 28%, var(--surface))` | The bottom of tall screenshots |
+
+## Hero field response
+
+These were measured by sampling 74 of the source's 516 dashes with the pointer held at a fixed point. With `d` the distance to the pointer and `a` the angle from the dash to the pointer:
+
+- `f = (1 − d/R)^1.8`, with R ≈ 660px at 1440px wide
+- rotation `90° + f·(a − 90°)`
+- thickness `8px × (0.375 + 0.625f)`
+- opacity `0.62 + 0.38f`
+
+The source grid is 43 × 12 cells of 33 × 41px with 29px pills, and sets `touch-action: pinch-zoom` so touch drags steer it.
+
 ## Spacing, shape, motion
 
 - Header: 60px sticky, white, 12px vertical padding.

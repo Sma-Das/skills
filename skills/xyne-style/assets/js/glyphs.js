@@ -110,3 +110,42 @@ export function glyph(kind) {
 }
 
 export const glyphKinds = Object.keys(KINDS);
+
+// Light a card's glyph around the pointer: strokes near it brighten and thicken,
+// echoing the hero dash field. Hover enhancement only; the glyph reads fine without it.
+//
+//   for (const card of document.querySelectorAll(".xs-card")) lightGlyph(card);
+export function lightGlyph(card, { radius = 46 } = {}) {
+  const svgEl = card.querySelector(".xs-card-art svg");
+  if (!svgEl || !matchMedia("(hover: hover)").matches) return () => {};
+  const lines = [...svgEl.querySelectorAll("line")].map(el => {
+    const g = n => Number(el.getAttribute(n));
+    return { el, x: (g("x1") + g("x2")) / 2, y: (g("y1") + g("y2")) / 2, o: g("opacity"), w: g("stroke-width") };
+  });
+  let frame = 0, point = null;
+
+  function paint() {
+    frame = 0;
+    for (const l of lines) {
+      const k = point ? Math.max(0, 1 - Math.hypot(point.x - l.x, point.y - l.y) / radius) : 0;
+      l.el.setAttribute("opacity", r1(l.o + (1 - l.o) * k));
+      l.el.setAttribute("stroke-width", r1(l.w * (1 + 0.7 * k)));
+    }
+  }
+  function onMove(event) {
+    const m = svgEl.getScreenCTM();
+    if (!m) return;
+    const p = new DOMPoint(event.clientX, event.clientY).matrixTransform(m.inverse());
+    point = { x: p.x, y: p.y };
+    if (!frame) frame = requestAnimationFrame(paint);
+  }
+  function onLeave() { point = null; if (!frame) frame = requestAnimationFrame(paint); }
+  card.addEventListener("pointermove", onMove, { passive: true });
+  card.addEventListener("pointerleave", onLeave, { passive: true });
+  return () => {
+    cancelAnimationFrame(frame);
+    card.removeEventListener("pointermove", onMove);
+    card.removeEventListener("pointerleave", onLeave);
+    point = null; paint();
+  };
+}

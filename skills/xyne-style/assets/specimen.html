@@ -35,7 +35,11 @@
   .mock .xs-float { padding: 0.75rem 0.875rem; margin-inline: -0.5rem; color: var(--ink); display: grid; gap: 0.5rem; }
   .mock .ticket { display: flex; gap: 1rem; flex-wrap: wrap; font: 500 0.7rem/1.4 var(--font-mono); letter-spacing: 0.06em; color: var(--muted); }
   .mock .ticket b { color: var(--brand-ink); font-weight: 600; }
-  .stack { display: grid; gap: 1rem; }
+  .stack { display: grid; gap: 1rem; align-content: start; }
+  .diagram { display: grid; }
+  .diagram > .xs-node { min-height: 3rem; }
+  [data-stat-card] { justify-self: start; margin-top: 0.5rem; }
+  @media (min-width: 64rem) { [data-stat-card] { margin-left: -4.5rem; margin-top: 1.25rem; } }
   .row5 { display: grid; gap: 1rem; grid-template-columns: repeat(2, 1fr); }
   .row3 { display: grid; gap: 1rem; grid-template-columns: 1fr; }
   @media (min-width: 48rem) { .row5 { grid-template-columns: repeat(5, 1fr); } .row3 { grid-template-columns: repeat(3, 1fr); } }
@@ -113,13 +117,12 @@
       <h2 class="xs-title xs-s4" style="margin-bottom: 3rem">Start with our <span class="xs-hl">tools</span>.<br>Or build your own.</h2>
       <div class="products">
         <nav class="xs-rail" aria-label="Products">
-          <a href="#products" aria-current="true"><span class="n">01</span>Board</a>
-          <a href="#products"><span class="n">02</span>Search</a>
-          <a href="#products"><span class="n">03</span>Agents</a>
-          <a href="#products"><span class="n">04</span>Logbook</a>
-          <a href="#products"><span class="n">05</span>Desk</a>
+          <a href="#p-board" aria-current="true"><span class="n">01</span>Board</a>
+          <a href="#p-models"><span class="n">02</span>Models</a>
+          <a href="#p-sync"><span class="n">03</span>Sync</a>
         </nav>
-        <div class="xs-panel">
+        <div class="stack" style="gap: 5rem">
+        <div class="xs-panel" id="p-board">
           <div class="stack">
             <h3 class="xs-subtitle">One board for crews and the agents that help them</h3>
             <p class="xs-body is-ink" style="max-width: 30rem; margin-top: 1rem">Jobs, readings, photos and handovers sit in one place, with agents filing the paperwork alongside the people doing the work.</p>
@@ -141,6 +144,54 @@
               </main>
             </div>
           </div>
+        </div>
+
+        <div class="xs-panel" id="p-models">
+          <div class="stack">
+            <h3 class="xs-subtitle">A field model tuned for maintenance calls</h3>
+            <p class="xs-body is-ink" style="max-width: 30rem; margin-top: 1rem">Hover, focus or tap a bar to read it in the card. Every figure here is invented for the specimen.</p>
+            <ul class="xs-checks" style="margin-top: 1.5rem">
+              <li><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="8"/><path d="m6.8 10.2 2.2 2.2 4.2-4.6"/></svg>Reads photos of gauges and nameplates</li>
+              <li><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="8"/><path d="m6.8 10.2 2.2 2.2 4.2-4.6"/></svg>Runs on a single on-site GPU</li>
+            </ul>
+          </div>
+          <div class="stack" style="position: relative">
+            <div class="xs-bars" data-pending data-bars>
+              <div class="xs-bars-legend"><span style="--swatch:var(--ink)">Baseline</span><span style="--swatch:var(--brand)">Field model</span><span style="--swatch:var(--faint)">Open 30B</span></div>
+              <div class="xs-bars-group"><h4>Fault triage<span>% correct, 240 calls</span></h4><button type="button" class="xs-bar " style="--v:84.1;--swatch:var(--ink)" data-label="Baseline · Fault triage" data-value="84.1" data-unit="%" data-sub="Reference model"><span>Baseline</span><span class="track"><span class="fill"></span></span><span class="val">84.1%</span></button><button type="button" class="xs-bar is-brand" style="--v:88.3;--swatch:var(--brand)" data-label="Field model · Fault triage" data-value="88.3" data-unit="%" data-sub="+4.2 pts vs baseline"><span>Field model</span><span class="track"><span class="fill"></span></span><span class="val">88.3%</span></button><button type="button" class="xs-bar " style="--v:82.6;--swatch:var(--faint)" data-label="Open 30B · Fault triage" data-value="82.6" data-unit="%" data-sub="-1.5 pts vs baseline"><span>Open 30B</span><span class="track"><span class="fill"></span></span><span class="val">82.6%</span></button></div>
+              <div class="xs-bars-group"><h4>Part lookup<span>% correct, 180 calls</span></h4><button type="button" class="xs-bar " style="--v:79.4;--swatch:var(--ink)" data-label="Baseline · Part lookup" data-value="79.4" data-unit="%" data-sub="Reference model"><span>Baseline</span><span class="track"><span class="fill"></span></span><span class="val">79.4%</span></button><button type="button" class="xs-bar is-brand" style="--v:86.9;--swatch:var(--brand)" data-label="Field model · Part lookup" data-value="86.9" data-unit="%" data-sub="+7.5 pts vs baseline"><span>Field model</span><span class="track"><span class="fill"></span></span><span class="val">86.9%</span></button><button type="button" class="xs-bar " style="--v:80.2;--swatch:var(--faint)" data-label="Open 30B · Part lookup" data-value="80.2" data-unit="%" data-sub="+0.8 pts vs baseline"><span>Open 30B</span><span class="track"><span class="fill"></span></span><span class="val">80.2%</span></button></div>
+              <div class="xs-bars-axis"><span></span><div><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div><span></span></div>
+            </div>
+            <div class="xs-float xs-stat" data-stat-card aria-live="polite">
+              <span class="xs-kicker" data-stat="label">Field model · Fault triage</span>
+              <span class="xs-stat-value" data-stat="value">88.3%</span>
+              <span class="xs-stat-sub" data-stat="sub">+4.2 pts vs baseline</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="xs-panel" id="p-sync">
+          <div class="stack">
+            <h3 class="xs-subtitle">Live sync from the plant floor to every screen</h3>
+            <p class="xs-body is-ink" style="max-width: 30rem; margin-top: 1rem">Readings stream up as they change, and screens subscribe to exactly the rows they show.</p>
+            <a class="xs-cta" href="#architecture" style="margin-top: 2rem">
+              <span class="xs-cta-face">Read the design<span class="xs-cta-cap"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.875" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.2 10h11.6M10 15.8 15.8 10 10 4.2"/></svg></span></span>
+              <span class="xs-cta-fill" aria-hidden="true">Read the design<span class="xs-cta-cap"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.875" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.2 10h11.6M10 15.8 15.8 10 10 4.2"/></svg></span></span>
+            </a>
+          </div>
+          <div class="diagram" role="img" aria-label="Diagram: screens subscribe to the sync service, which streams row changes from the sensor log.">
+            <div class="xs-node">Screens</div>
+            <div class="xs-streams"><div><em>subscribe</em><span class="xs-stream is-down"></span></div><div class="is-brand"><span class="xs-stream is-up"></span><em>changes only</em></div></div>
+            <div class="xs-group">
+              <span class="xs-group-label">Sync service</span>
+              <div class="xs-layer"><div class="xs-layer-head">Socket layer</div><div class="xs-layer-row"><div class="xs-node">Read / write<small>diffs out · subs in</small></div><div class="xs-node">Sessions<small>resume · retry</small></div></div></div>
+              <div class="xs-streams"><div class="is-brand"><span class="xs-stream is-up"></span><em>row diffs</em></div></div>
+              <div class="xs-layer is-brand"><div class="xs-layer-head">Diff layer</div><div class="xs-layer-row"><div class="xs-node is-brand">Router<small>which views</small></div><div class="xs-node is-brand">Frames<small>each row once</small></div><div class="xs-node is-brand">Planner<small>joins · windows</small></div></div></div>
+            </div>
+            <div class="xs-streams"><div><em>reads</em><span class="xs-stream is-down"></span></div><div class="is-brand"><span class="xs-stream is-up"></span><em>log</em></div></div>
+            <div class="xs-node">Sensor log</div>
+          </div>
+        </div>
         </div>
       </div>
     </section>
@@ -192,10 +243,15 @@
 
 <script type="module">
   import { dashField } from "./js/dash-field.js";
-  import { glyph } from "./js/glyphs.js";
+  import { glyph, lightGlyph } from "./js/glyphs.js";
+  import { rail } from "./js/rail.js";
+  import { bars } from "./js/bars.js";
 
   for (const el of document.querySelectorAll("[data-glyph]")) el.innerHTML = glyph(el.dataset.glyph);
+  for (const card of document.querySelectorAll(".xs-card")) lightGlyph(card);
   for (const el of document.querySelectorAll("[data-field]")) dashField(el);
+  for (const nav of document.querySelectorAll(".xs-rail")) rail(nav);
+  bars(document.querySelector("[data-bars]"), document.querySelector("[data-stat-card]"));
 
   const root = document.documentElement;
   const toggle = document.querySelector("[data-theme-toggle]");

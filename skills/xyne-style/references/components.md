@@ -29,7 +29,8 @@ The rules overlay is absolutely positioned. It paints over unpositioned section 
 
 ## Hero
 
-- Make the field fill the space above the headline, at roughly 60% of the first viewport: `dashField(el)` from [dash-field.js](../assets/js/dash-field.js).
+- Make the field fill the space above the headline, at roughly 60% of the first viewport: `dashField(el)` from [dash-field.js](../assets/js/dash-field.js). Set the host's `color` to `var(--brand)`.
+- Options: `lockTouch: true` makes the field a drag surface on touch screens. It blocks page scroll over the field, as the source does, so use it only when the field is short. `idle: true` adds a slow drift when nobody is pointing. `reach` and `falloff` tune the radius and curve.
 - Put a mega headline of one to three words bottom left, with mono kickers under it naming three properties.
 - Put the lede bottom right with a first-line indent of about 4rem, followed by the `.xs-cta`.
 - On phones the field shrinks to about 16rem and everything stacks.
@@ -46,7 +47,7 @@ Use a grey band containing a grid of six `.xs-card` tiles in two rows of three:
 </article>
 ```
 
-Render the art with `glyph(kind)` from [glyphs.js](../assets/js/glyphs.js). Give each card a different glyph, chosen so its shape echoes the idea: a burst for openness, a comb for choice, a frame for containment, a ring for inheritance, waves for flow, an arc for growth over time.
+Render the art with `glyph(kind)` from [glyphs.js](../assets/js/glyphs.js), then call `lightGlyph(card)` so strokes near the pointer brighten. Give each card a different glyph, chosen so its shape echoes the idea: a burst for openness, a comb for choice, a frame for containment, a ring for inheritance, waves for flow, an arc for growth over time.
 
 ## Red band
 
@@ -54,9 +55,26 @@ The red band holds three statements on columns 1, 3, and 5, each a `.xs-barlabel
 
 ## Product rail and panel
 
-A sticky mono index on the left (`.xs-rail`, numbered `01`, `02`, …) sits beside a grey `.xs-panel`. The panel holds a sub-title, a paragraph, an `.xs-checks` list with brand check-circle icons, and a full-width `.xs-frame` with a screenshot or mock. Set `aria-current="true"` on the active item. Drive it with an IntersectionObserver when each product has its own panel. Below 64rem the rail becomes a horizontal scroller.
+A sticky mono index on the left (`.xs-rail`, numbered `01`, `02`, …) sits beside a stack of grey `.xs-panel` sections. Each panel holds a sub-title, a paragraph, an `.xs-checks` list with brand check-circle icons, and a visual: a screenshot in `.xs-frame`, a bar chart, or a diagram.
+
+Link each rail item to its panel's id and call `rail(nav)` from [rail.js](../assets/js/rail.js). It marks the panel under the reading line (35% down the viewport) and sets `--progress` on that link, so the 2px underline fills as you scroll through the panel. Without JS, put `aria-current="true"` in the markup and the underline shows in full. Below 64rem the rail becomes a horizontal scroller that keeps the active item in view.
 
 Inside a mock, an element that floats over the screenshot (a toast, an agent reply) gets `.xs-float`. That is the only shadow in the system.
+
+## Comparison bars with a linked stat
+
+Use this for a head-to-head, such as yours against a baseline and an alternative. Give each series one swatch: ink, brand, and faint. The brand series is always the product. Each `.xs-bar` is a `<button>` with `--v` (0–100) and `data-label`, `data-value`, `data-unit`, and `data-sub`. `bars(root, statCard)` from [bars.js](../assets/js/bars.js) grows the bars in on first view. Hovering, focusing, or tapping a bar dims the rest and counts its value into the `.xs-stat` card, which floats over the panel's left edge in `.xs-float`. Tapping pins a bar, and tapping it again unpins it. The card is `aria-live="polite"`.
+
+## Layered system diagram (light)
+
+Stack these from top to bottom:
+
+1. An `.xs-node` for the consumer.
+2. `.xs-streams` connectors. Each is an `.xs-stream.is-up` or `.is-down` with an `<em>` label. Add `.is-brand` for the path that matters.
+3. An `.xs-group`, a dashed outline with an `.xs-group-label` on the line, holding `.xs-layer` blocks. Each layer has a hatched `.xs-layer-head` and an `.xs-layer-row` of nodes. Mark the layer that is the product's differentiator `.is-brand`, so it gets a brand hatch and tinted nodes.
+4. More connectors, then the source node.
+
+Hovering a layer turns its hatch brand. Hovering a node tints it. Give the whole diagram `role="img"` and an `aria-label` that states the flow in one sentence.
 
 ## Dark diagram
 

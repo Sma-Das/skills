@@ -28,7 +28,13 @@ npx skills add Sma-Das/skills --skill interface-polish
 
 ### Xyne style
 
-[xyne-style](skills/xyne-style/SKILL.md) restyles a product or marketing UI in the design language of [xyne.ai](https://xyne.ai/): dashed column rules on a 2/4/6 column grid, one coral-red used for fills and marks, a wide-set highlight word in each heading, Geist Mono uppercase labels, flat tiles on a cool grey band, and pointer-reactive dash illustrations. It ships tokens and components ([xyne.css](skills/xyne-style/assets/xyne.css)), a dash-field hero script, six dash glyphs, a derived dark theme, and a specimen page. The source page fails WCAG AA in several places, so the tokens keep the vivid red for fills and large text and use a darker red for small text. `data-fidelity="exact"` restores the original values. The skill applies the visual language to your own product. It doesn't copy Xyne's logo, product names, or copy.
+[xyne-style](skills/xyne-style/SKILL.md) restyles a product or marketing UI in the design language of [xyne.ai](https://xyne.ai/): dashed column rules on a 2/4/6 column grid, one coral-red used for fills and marks, a wide-set highlight word in each heading, Geist Mono uppercase labels, flat tiles on a cool grey band, hairline hatch and stream-connector textures, and dash illustrations. It ships tokens and components ([xyne.css](skills/xyne-style/assets/xyne.css)), a derived dark theme, a specimen page, and these reactive elements:
+
+- a hero dash field that follows the cursor or finger, with a response curve measured from the source
+- a scroll-progress section rail
+- glyph cards that light up around the pointer
+- comparison bars linked to a counting stat card
+- layered diagrams with animated connectors The source page fails WCAG AA in several places, so the tokens keep the vivid red for fills and large text and use a darker red for small text. `data-fidelity="exact"` restores the original values. The skill applies the visual language to your own product. It doesn't copy Xyne's logo, product names, or copy.
 
 ```sh
 npx skills add Sma-Das/skills --skill xyne-style
@@ -38,6 +44,7 @@ npx skills add Sma-Das/skills --skill xyne-style
 | --- | --- |
 | ![Xyne style specimen hero, light](skills/xyne-style/assets/specimen-light.png) | ![Xyne style specimen hero, dark](skills/xyne-style/assets/specimen-dark.png) |
 | ![Xyne style feature tiles, light](skills/xyne-style/assets/cards-light.png) | ![Xyne style feature tiles, dark](skills/xyne-style/assets/cards-dark.png) |
+| ![Xyne style comparison bars and stat card](skills/xyne-style/assets/bars-light.png) | ![Xyne style layered diagram with stream connectors](skills/xyne-style/assets/diagram-light.png) |
 
 ### Hairline
 
