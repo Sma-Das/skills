@@ -141,13 +141,17 @@ export function morphText(el, nextText, { by = "word", duration } = {}) {
     else key = `m${gen}-${i}`;
     return { key, text, className: "lt-token" };
   });
-  // Make sure existing plain text is tokenised once, keyed the same way.
-  if (!el.querySelector("[data-key]")) {
+  // Key the live tokens against this diff, so unchanged text is never re-entered.
+  const keyFor = (i) => (i < p ? `p${i}` : i >= prev.length - s ? `s${prev.length - 1 - i}` : `m${gen - 1}-${i}`);
+  const live = [...el.children].filter((n) => !n.dataset.ghost);
+  if (live.length === prev.length && live.every((n, i) => n.textContent === prev[i])) {
+    live.forEach((n, i) => (n.dataset.key = keyFor(i)));
+  } else {
     el.replaceChildren(...prev.map((text, i) => {
       const span = document.createElement("span");
       span.className = "lt-token";
       span.textContent = text;
-      span.dataset.key = i < p ? `p${i}` : i >= prev.length - s ? `s${prev.length - 1 - i}` : `m0-${i}`;
+      span.dataset.key = keyFor(i);
       return span;
     }));
   }
@@ -177,6 +181,7 @@ export function renderNumber(el, digits, { prefix = "$", locale = "en-US" } = {}
     items.push({ key: "dot", text: ".", className: "lt-sep" });
     [...frac].forEach((d, i) => items.push({ key: `f${i}`, text: d, className: "lt-digit" }));
   }
+  if (!el.getAttribute("role")) el.setAttribute("role", "img");
   el.setAttribute("aria-label", `${prefix}${Number(raw || 0).toLocaleString(locale)}`);
   renderKeyed(el, items, { duration: 300 });
 }
@@ -193,6 +198,9 @@ export function resizeAround(el, mutate, { duration = 420, easing = ease.drawer 
 
 /** Slide panel content toward the tab that was chosen: fly, don't teleport. */
 export function slidePanels(outgoing, incoming, direction, { distance = 28, duration = 340 } = {}) {
+  // Leave from wherever the outgoing panel is now, even mid-entrance.
+  const from = outgoing && getComputedStyle(outgoing);
+  const start = from ? { opacity: from.opacity, transform: from.transform === "none" ? "none" : from.transform } : null;
   stop(incoming);
   if (outgoing) stop(outgoing);
   if (reduced()) {
@@ -201,7 +209,7 @@ export function slidePanels(outgoing, incoming, direction, { distance = 28, dura
   }
   const d = direction * distance;
   if (outgoing) {
-    animate(outgoing, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: `translateX(${-d}px)` }], duration * 0.7, ease.out, { fill: "forwards" });
+    animate(outgoing, [start, { opacity: 0, transform: `translateX(${-d}px)` }], duration * 0.7, ease.out, { fill: "forwards" });
   }
   animate(incoming, [{ opacity: 0, transform: `translateX(${d}px)` }, { opacity: 1, transform: "none" }], duration, ease.out);
 }

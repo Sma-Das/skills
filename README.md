@@ -26,6 +26,18 @@ npx skills add Sma-Das/skills --skill '*'
 npx skills add Sma-Das/skills --skill interface-polish
 ```
 
+### Little touches
+
+[little-touches](skills/little-touches/SKILL.md) adds small, organic details to an existing interface. Elements travel instead of being replaced, labels and icons morph, commas slide as numbers grow, explainers show the thing you tapped, and edge states get the same care as full ones. Bigger moments of delight go where they are rare. The guidance comes from [Benji Taylor](https://x.com/benjitaylor)'s posts and essays on product craft. Each pattern in the [catalog](skills/little-touches/references/catalog.md) links to its source. The skill also includes web [recipes](skills/little-touches/references/recipes.md), dependency-free helpers ([touches.js](skills/little-touches/assets/touches.js)), and a live specimen.
+
+```sh
+npx skills add Sma-Das/skills --skill little-touches
+```
+
+| Light | Dark |
+| --- | --- |
+| ![Little touches specimen, light](skills/little-touches/assets/specimen-light.png) | ![Little touches specimen, dark](skills/little-touches/assets/specimen-dark.png) |
+
 ### Xyne style
 
 [xyne-style](skills/xyne-style/SKILL.md) restyles a product or marketing UI in the design language of [xyne.ai](https://xyne.ai/): dashed column rules on a 2/4/6 column grid, one coral-red used for fills and marks, a wide-set highlight word in each heading, Geist Mono uppercase labels, flat tiles on a cool grey band, hairline hatch and stream-connector textures, and dash illustrations. It ships tokens and components ([xyne.css](skills/xyne-style/assets/xyne.css)), a derived dark theme, a specimen page, and these reactive elements:
@@ -89,6 +101,7 @@ The skills work with agents that support the [Agent Skills format](https://agent
 - “Use hairline-charts to show monthly totals and a running total.”
 - “Use hairline-motion to make this drawer interruptible and respect reduced motion.”
 - “Use xyne-style to restyle this landing page and keep our logo and copy.”
+- “Use little-touches to find the moments in our send flow that deserve small details, and build them.”
 - “Use interface-polish to improve this app's typography, controls, and narrow-pane behavior without changing its visual identity.”
 
 Bright, saturated color recommendations cover copper-orange, sky blue, leaf green, red-coral, gold, violet, and monochrome chrome with vivid categorical colors. Dark and light themes share semantic tokens; a generator creates custom palettes and checks contrast. The style does not require black and bronze.
@@ -108,7 +121,7 @@ Generated, fictional data only.
 | ![Hairline UI, dark theme](skills/hairline-ui/assets/specimen-dark.png) | ![Hairline UI, light theme](skills/hairline-ui/assets/specimen-light.png) |
 | ![SVG charts, dark theme](skills/hairline-charts/assets/specimen-dark.png) | ![SVG charts, light theme](skills/hairline-charts/assets/specimen-light.png) |
 
-The interactive specimens use ES modules and must be served over HTTP. Serve the `skills/` directory on an address appropriate for your environment, then open `hairline-ui/assets/specimen.html`, `hairline-charts/assets/specimen.html`, `hairline-motion/assets/demo.html`, `xyne-style/assets/specimen.html`, or `morphing-icons/assets/sequencer.html`. Keep sibling skill folders together for their relative asset imports.
+The interactive specimens use ES modules and must be served over HTTP. Serve the `skills/` directory on an address appropriate for your environment, then open `hairline-ui/assets/specimen.html`, `hairline-charts/assets/specimen.html`, `hairline-motion/assets/demo.html`, `xyne-style/assets/specimen.html`, `morphing-icons/assets/sequencer.html`, or `little-touches/assets/demo.html`. Keep sibling skill folders together for their relative asset imports.
 
 ## Development
 
