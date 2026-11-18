@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xyne style specimen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400..600&family=Google+Sans+Flex:opsz,wdth,wght@6..144,25..151,100..1000&family=Manrope:wght@400..700&display=swap">
+<link rel="stylesheet" href="xyne.css">
+<style>
+  html, body { margin: 0; background: var(--bg); }
+  .hero { min-height: calc(100svh - var(--header-h)); grid-template-rows: 1fr auto; padding-block: 3.5rem 3rem; row-gap: 2.5rem; }
+  .hero .xs-field { min-height: 16rem; }
+  .hero-foot { display: grid; gap: 2rem; align-items: end; }
+  .hero-tags { display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 0.75rem; }
+  .hero-side { display: grid; gap: 2.5rem; justify-items: start; }
+  @media (min-width: 64rem) {
+    .hero-foot { grid-template-columns: 4fr 2fr; column-gap: 0; }
+    .hero-side { justify-items: end; }
+    .hero-side .xs-lede { text-indent: 4rem; }
+  }
+  .band-grid { display: grid; gap: 3rem; padding-block: 2rem; }
+  @media (min-width: 64rem) { .band-grid { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; padding-block: 6rem; } }
+  .band-grid .xs-body { color: var(--on-band-soft); font-size: 1.075rem; max-width: 22rem; margin-top: 1.75rem; }
+  .band-grid > div { --card-pad: 1.5rem; padding-inline-start: var(--card-pad); }
+  .products { display: grid; gap: 2rem; }
+  @media (min-width: 64rem) { .products { grid-template-columns: 1fr 5fr; gap: 0; } }
+  .mock { display: grid; grid-template-columns: 9rem 1fr; min-height: 15rem; font: 500 0.75rem/1.5 var(--font-text); color: var(--muted); }
+  .mock aside { border-right: 1px solid var(--border); padding: 0.875rem; display: grid; align-content: start; gap: 0.5rem; }
+  .mock aside b { color: var(--ink); font-weight: 600; }
+  .mock main { padding: 0.875rem 1.25rem; display: grid; align-content: start; gap: 0.875rem; position: relative; }
+  .mock .row { display: grid; grid-template-columns: 1.5rem 1fr; gap: 0.625rem; }
+  .mock .av { width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--surface); }
+  .mock .xs-float { padding: 0.75rem 0.875rem; margin-inline: -0.5rem; color: var(--ink); display: grid; gap: 0.5rem; }
+  .mock .ticket { display: flex; gap: 1rem; flex-wrap: wrap; font: 500 0.7rem/1.4 var(--font-mono); letter-spacing: 0.06em; color: var(--muted); }
+  .mock .ticket b { color: var(--brand-ink); font-weight: 600; }
+  .stack { display: grid; gap: 1rem; align-content: start; }
+  .diagram { display: grid; }
+  .diagram > .xs-node { min-height: 3rem; }
+  [data-stat-card] { justify-self: start; margin-top: 0.5rem; }
+  @media (min-width: 64rem) { [data-stat-card] { margin-left: -4.5rem; margin-top: 1.25rem; } }
+  .row5 { display: grid; gap: 1rem; grid-template-columns: repeat(2, 1fr); }
+  .row3 { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+  @media (min-width: 48rem) { .row5 { grid-template-columns: repeat(5, 1fr); } .row3 { grid-template-columns: repeat(3, 1fr); } }
+  .partner { display: grid; gap: 3rem; align-items: center; }
+  @media (min-width: 64rem) { .partner { grid-template-columns: 4fr 2fr; } }
+  .manifesto .xs-display { color: var(--brand); }
+  .manifesto .copy { display: grid; gap: 1.75rem; max-width: 36rem; }
+  .footer-cols { display: grid; gap: 2.5rem; grid-template-columns: repeat(2, 1fr); }
+  @media (min-width: 64rem) { .footer-cols { grid-template-columns: repeat(4, 1fr); } }
+</style>
+</head>
+<body>
+<div class="xs-page">
+  <div class="xs-lines" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+  <header class="xs-shell xs-header">
+    <a class="xs-brand" href="#top">tessel</a>
+    <nav class="xs-nav" aria-label="Primary">
+      <a href="#platform" class="is-active">Platform</a>
+      <a href="#products">Products</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#about">About</a>
+    </nav>
+    <div class="xs-actions">
+      <button class="xs-theme-toggle" type="button" aria-label="Switch to dark theme" data-theme-toggle>
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="3.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M4.3 15.7l1.4-1.4M14.3 5.7l1.4-1.4"/></svg>
+      </button>
+      <a class="xs-pill" href="#contact">Book a call</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="xs-shell hero">
+      <div class="xs-field" data-field></div>
+      <div class="hero-foot">
+        <div>
+          <h1 class="xs-mega">Field OS</h1>
+          <div class="hero-tags">
+            <span class="xs-kicker">Self-hosted</span>
+            <span class="xs-kicker">Any model</span>
+            <span class="xs-kicker">Audit-ready</span>
+          </div>
+        </div>
+        <div class="hero-side">
+          <p class="xs-lede">Tessel is a fictional operations platform used to show this style. Plans, crews, sensors and the agents that watch them share one permission-aware record.</p>
+          <a class="xs-cta" href="#contact">
+            <span class="xs-cta-face">See a demo<span class="xs-cta-cap"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.875" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.2 10h11.6M10 15.8 15.8 10 10 4.2"/></svg></span></span>
+            <span class="xs-cta-fill" aria-hidden="true">See a demo<span class="xs-cta-cap"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.875" stroke-linecap="round" stroke-linejoin="round"><path d="M4.2 10h11.6M10 15.8 15.8 10 10 4.2"/></svg></span></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="platform" class="xs-shell xs-section is-surface">
+      <h2 class="xs-title xs-c3 xs-s4" style="margin-bottom: clamp(2rem, 4.9vw, 5.25rem)">A <span class="xs-hl">steadier</span> way to run work in the field</h2>
+      <div class="xs-cards">
+        <article class="xs-card"><div class="xs-card-art" data-glyph="burst"></div><h3 class="xs-label xs-barlabel">Open source</h3><p class="xs-body">Read every line that touches your records, and keep running it if the vendor goes away.</p></article>
+        <article class="xs-card"><div class="xs-card-art" data-glyph="comb"></div><h3 class="xs-label xs-barlabel">Model choice</h3><p class="xs-body">Swap the model behind any agent without rewriting the workflow around it.</p></article>
+        <article class="xs-card"><div class="xs-card-art" data-glyph="frame"></div><h3 class="xs-label xs-barlabel">Stays on site</h3><p class="xs-body">Data lives on hardware you choose. Nothing leaves without a rule that says it may.</p></article>
+        <article class="xs-card"><div class="xs-card-art" data-glyph="ring"></div><h3 class="xs-label xs-barlabel">Inherited access</h3><p class="xs-body">Existing roles carry over, so a crew lead sees their sites and nobody else's.</p></article>
+        <article class="xs-card"><div class="xs-card-art" data-glyph="waves"></div><h3 class="xs-label xs-barlabel">Hands-on rollout</h3><p class="xs-body">An engineer stays with you from the first import to the first audit.</p></article>
+        <article class="xs-card"><div class="xs-card-art" data-glyph="arc"></div><h3 class="xs-label xs-barlabel">People sign off</h3><p class="xs-body">Agents draft the change; a named person approves it before it ships.</p></article>
+      </div>
+    </section>
+
+    <section class="xs-shell xs-section is-band">
+      <div class="band-grid">
+        <div><h3 class="xs-label xs-barlabel">Your records stay yours</h3><p class="xs-body">Everything runs inside your own network, under retention rules you set.</p></div>
+        <div><h3 class="xs-label xs-barlabel">Smaller bills</h3><p class="xs-body">Routine questions go to small models. Large ones are called only when the job needs them.</p></div>
+        <div><h3 class="xs-label xs-barlabel">Built to last</h3><p class="xs-body">Open code and replaceable parts mean no single supplier can strand you.</p></div>
+      </div>
+    </section>
+
+    <section id="products" class="xs-shell xs-section">
+      <h2 class="xs-title xs-s4" style="margin-bottom: 3rem">Start with our <span class="xs-hl">tools</span>.<br>Or build your own.</h2>
+      <div class="products">
+        <nav class="xs-rail" aria-label="Products">
+          <a href="#p-board" aria-current="true"><span class="n">01</span>Board</a>
+          <a href="#p-models"><span class="n">02</span>Models</a>
+          <a href="#p-sync"><span class="n">03</span>Sync</a>
+        </nav>
+        <div class="stack" style="gap: 5rem">
+        <div class="xs-panel" id="p-board">
+          <div class="stack">
+            <h3 class="xs-subtitle">One board for crews and the agents that help them</h3>
+            <p class="xs-body is-ink" style="max-width: 30rem; margin-top: 1rem">Jobs, readings, photos and handovers sit in one place, with agents filing the paperwork alongside the people doing the work.</p>
+          </div>
+          <ul class="xs-checks">
+            <li><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="8"/><path d="m6.8 10.2 2.2 2.2 4.2-4.6"/></svg>Every site, shift and sensor in one view</li>
+            <li><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="8"/><path d="m6.8 10.2 2.2 2.2 4.2-4.6"/></svg>Each handover becomes context an agent can use</li>
+          </ul>
+          <div class="xs-wide xs-frame">
+            <div class="mock">
+              <aside><b>North yard</b><span># pumps</span><span># night-shift</span><span># inspections</span></aside>
+              <main>
+                <div class="row"><span class="av"></span><span><b style="color:var(--ink)">R. Okafor</b> · Pump 4 pressure dipped again after the 02:00 restart.</span></div>
+                <div class="xs-float">
+                  <span><b>Tessel agent</b> · Logged as a fault and linked to this thread.</span>
+                  <span class="ticket"><b>JOB-218</b><span>Open</span><span>P2</span><span>North yard</span></span>
+                </div>
+                <div class="row"><span class="av"></span><span><b style="color:var(--ink)">M. Lindqvist</b> · Thanks. I'll bring the spare seal kit on the morning run.</span></div>
+              </main>
+            </div>
+          </div>
+        </div>
+
+        <div class="xs-panel" id="p-models">
+          <div class="stack">
+            <h3 class="xs-subtitle">A field model tuned for maintenance calls</h3>
+            <p class="xs-body is-ink" style="max-width: 30rem; margin-top: 1rem">Hover, focus or tap a bar to read it in the card. Every figure here is invented for the specimen.</p>
+            <ul class="xs-checks" style="margin-top: 1.5rem">
+              <li><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="8"/><path d="m6.8 10.2 2.2 2.2 4.2-4.6"/></svg>Reads photos of gauges and nameplates</li>
+              <li><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="8"/><path d="m6.8 10.2 2.2 2.2 4.2-4.6"/></svg>Runs on a single on-site GPU</li>
+            </ul>
+          </div>
+          <div class="stack" style="position: relative">
+            <div class="xs-bars" data-pending data-bars>
+              <div class="xs-bars-legend"><span style="--swatch:var(--ink)">Baseline</span><span style="--swatch:var(--brand)">Field model</span><span style="--swatch:var(--faint)">Open 30B</span></div>
+              <div class="xs-bars-group"><h4>Fault triage<span>% correct, 240 calls</span></h4><button type="button" class="xs-bar " style="--v:84.1;--swatch:var(--ink)" data-label="Baseline · Fault triage" data-value="84.1" data-unit="%" data-sub="Reference model"><span>Baseline</span><span class="track"><span class="fill"></span></span><span class="val">84.1%</span></button><button type="button" class="xs-bar is-brand" style="--v:88.3;--swatch:var(--brand)" data-label="Field model · Fault triage" data-value="88.3" data-unit="%" data-sub="+4.2 pts vs baseline"><span>Field model</span><span class="track"><span class="fill"></span></span><span class="val">88.3%</span></button><button type="button" class="xs-bar " style="--v:82.6;--swatch:var(--faint)" data-label="Open 30B · Fault triage" data-value="82.6" data-unit="%" data-sub="-1.5 pts vs baseline"><span>Open 30B</span><span class="track"><span class="fill"></span></span><span class="val">82.6%</span></button></div>
+              <div class="xs-bars-group"><h4>Part lookup<span>% correct, 180 calls</span></h4><button type="button" class="xs-bar " style="--v:79.4;--swatch:var(--ink)" data-label="Baseline · Part lookup" data-value="79.4" data-unit="%" data-sub="Reference model"><span>Baseline</span><span class="track"><span class="fill"></span></span><span class="val">79.4%</span></button><button type="button" class="xs-bar is-brand" style="--v:86.9;--swatch:var(--brand)" data-label="Field model · Part lookup" data-value="86.9" data-unit="%" data-sub="+7.5 pts vs baseline"><span>Field model</span><span class="track"><span class="fill"></span></span><span class="val">86.9%</span></button><button type="button" class="xs-bar " style="--v:80.2;--swatch:var(--faint)" data-label="Open 30B · Part lookup" data-value="80.2" data-unit="%" data-sub="+0.8 pts vs baseline"><span>Open 30B</span><span class="track"><span class="fill"></span></span><span class="val">80.2%</span></button></div>
+              <div class="xs-bars-axis"><span></span><div><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div><span></span></div>
+            </div>
+            <div class="xs-float xs-stat" data-stat-card aria-live="polite">
+              <span class="xs-kicker" data-stat="label">Field model · Fault triage</span>
+              <span class="xs-stat-value" data-stat="value">88.3%</span>
+              <span class="xs-stat-sub" data-stat="sub">+4.2 pts vs baseline</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="xs-panel" id="p-sync">
+          <div class="stack">
+            <h3 class="xs-subtitle">Live sync from the plant floor to every screen</h3>
+            <p class="xs-body is-ink" style="max-width: 30rem; margin-top: 1rem">Readings stream up as they change, and screens subscribe to exactly the rows they show.</p>
+            <a class="xs-cta" href="#architecture" style="margin-top: 2rem">
+              <span class="xs-cta-face">Read the design<span class="xs-cta-cap"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.875" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.2 10h11.6M10 15.8 15.8 10 10 4.2"/></svg></span></span>
+              <span class="xs-cta-fill" aria-hidden="true">Read the design<span class="xs-cta-cap"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.875" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.2 10h11.6M10 15.8 15.8 10 10 4.2"/></svg></span></span>
+            </a>
+          </div>
+          <div class="diagram" role="img" aria-label="Diagram: screens subscribe to the sync service, which streams row changes from the sensor log.">
+            <div class="xs-node">Screens</div>
+            <div class="xs-streams"><div><em>subscribe</em><span class="xs-stream is-down"></span></div><div class="is-brand"><span class="xs-stream is-up"></span><em>changes only</em></div></div>
+            <div class="xs-group">
+              <span class="xs-group-label">Sync service</span>
+              <div class="xs-layer"><div class="xs-layer-head">Socket layer</div><div class="xs-layer-row"><div class="xs-node">Read / write<small>diffs out · subs in</small></div><div class="xs-node">Sessions<small>resume · retry</small></div></div></div>
+              <div class="xs-streams"><div class="is-brand"><span class="xs-stream is-up"></span><em>row diffs</em></div></div>
+              <div class="xs-layer is-brand"><div class="xs-layer-head">Diff layer</div><div class="xs-layer-row"><div class="xs-node is-brand">Router<small>which views</small></div><div class="xs-node is-brand">Frames<small>each row once</small></div><div class="xs-node is-brand">Planner<small>joins · windows</small></div></div></div>
+            </div>
+            <div class="xs-streams"><div><em>reads</em><span class="xs-stream is-down"></span></div><div class="is-brand"><span class="xs-stream is-up"></span><em>log</em></div></div>
+            <div class="xs-node">Sensor log</div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="architecture" class="xs-shell xs-section is-night">
+      <h2 class="xs-title xs-c2 xs-s4" style="margin-bottom: 3rem">A <span class="xs-hl">platform</span> underneath for the tools you build next</h2>
+      <div class="stack xs-c1 xs-to-end">
+        <div class="row5">
+          <div class="xs-tile is-solid">Search</div><div class="xs-tile is-solid">Agents</div><div class="xs-tile is-solid">Workflows</div><div class="xs-tile is-solid">Code</div><div class="xs-tile is-solid">++ Apps</div>
+        </div>
+        <div class="xs-tile is-hatched"><span>Guardrails</span><span>Tracing</span></div>
+        <div class="row3"><div class="xs-tile">Model router</div><div class="xs-tile">API / CLI</div><div class="xs-tile">Record graph</div></div>
+        <div class="row3"><div class="xs-tile">Tools</div><div class="xs-tile">Hybrid store</div><div class="xs-tile">Memory</div></div>
+        <div class="xs-tile is-dashed"><span>Governance</span><span>Roles + permissions</span></div>
+        <div class="xs-tile is-solid" style="flex-direction:column">Data sources<small>Spreadsheets, SCADA, Postgres, email</small></div>
+      </div>
+    </section>
+
+    <section class="xs-shell xs-section is-surface">
+      <div class="partner">
+        <h2 class="xs-title">Product first<br>Partner led<br><span class="xs-hl">On site</span> when needed</h2>
+        <ul class="xs-iconlist">
+          <li><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h14M10 3v14"/></svg>Guided setup</li>
+          <li><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="7" r="3"/><path d="M4 17c1-3 3.5-4.5 6-4.5s5 1.5 6 4.5"/></svg>Named rollout lead</li>
+          <li><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="14" height="12" rx="2"/><path d="m7 10 2 2 4-4"/></svg>Migration included</li>
+          <li><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16 16 4M7 4h9v9"/></svg>Custom fields and flows</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="about" class="xs-shell xs-section manifesto">
+        <h2 class="xs-display xs-c2 xs-s5">Run the yard before the robots</h2>
+        <div class="copy xs-c4 xs-to-end">
+          <p class="xs-statement">Tessel grew out of a decade of keeping <span class="xs-mark">fictional</span> water plants running through storms, audits and staff turnover.</p>
+          <p class="xs-statement">Most software for this work was written for offices. Ours was written on a clipboard first.</p>
+        </div>
+    </section>
+  </main>
+
+  <footer id="contact" class="xs-shell xs-footer">
+    <div class="footer-cols">
+      <div><a class="xs-brand" href="#top">tessel</a><p class="xs-fineprint">A fictional specimen product</p></div>
+      <div><h4>Products</h4><ul><li><a href="#products">Board</a></li><li><a href="#products">Search</a></li><li><a href="#products">Agents</a></li></ul></div>
+      <div><h4>Developers</h4><ul><li><a href="#architecture">Docs</a></li><li><a href="#architecture">Source</a></li><li><a href="#architecture">Changelog</a></li></ul></div>
+      <div><h4>Legal</h4><ul><li><a href="#contact">Terms</a></li><li><a href="#contact">Privacy</a></li></ul></div>
+    </div>
+  </footer>
+</div>
+
+<script type="module">
+  import { dashField } from "./js/dash-field.js";
+  import { glyph, lightGlyph } from "./js/glyphs.js";
+  import { rail } from "./js/rail.js";
+  import { bars } from "./js/bars.js";
+
+  for (const el of document.querySelectorAll("[data-glyph]")) el.innerHTML = glyph(el.dataset.glyph);
+  for (const card of document.querySelectorAll(".xs-card")) lightGlyph(card);
+  for (const el of document.querySelectorAll("[data-field]")) dashField(el);
+  for (const nav of document.querySelectorAll(".xs-rail")) rail(nav);
+  bars(document.querySelector("[data-bars]"), document.querySelector("[data-stat-card]"));
+
+  const root = document.documentElement;
+  const toggle = document.querySelector("[data-theme-toggle]");
+  const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  const sync = () => toggle.setAttribute("aria-label", isDark() ? "Switch to light theme" : "Switch to dark theme");
+  const params = new URLSearchParams(location.search);
+  if (params.get("theme")) root.dataset.theme = params.get("theme");
+  if (params.get("fidelity")) root.dataset.fidelity = params.get("fidelity");
+  toggle.addEventListener("click", () => { root.dataset.theme = isDark() ? "light" : "dark"; sync(); });
+  sync();
+</script>
+</body>
+</html>
