@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Morph Sequencer</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fafafa; --surface: #fff; --ink: #141414; --muted: #5c5c5c; --line: #e2e2e2; --accent: #2f5bea;
+    --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #111; --surface: #1a1a1a; --ink: #f0f0f0; --muted: #a3a3a3; --line: #2c2c2c; --accent: #8aa6ff; }
+  }
+  :root[data-theme="dark"] { --bg: #111; --surface: #1a1a1a; --ink: #f0f0f0; --muted: #a3a3a3; --line: #2c2c2c; --accent: #8aa6ff; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 var(--font); }
+  main { max-width: 960px; margin: 0 auto; padding: 32px 16px 64px; display: grid; gap: 28px; }
+  h1 { font-size: 18px; margin: 0; font-weight: 600; }
+  h2 { font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+  p { margin: 4px 0 0; color: var(--muted); }
+  .stage { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); gap: 20px; align-items: start; }
+  @media (max-width: 640px) { .stage { grid-template-columns: minmax(0, 1fr); } }
+  .preview { aspect-ratio: 1; width: 100%; max-width: 220px; display: grid; place-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; cursor: pointer; color: var(--ink); padding: 0; }
+  .preview:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .now { font: 12px var(--mono); color: var(--muted); margin-top: 8px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; }
+  .controls button, .controls label { font: inherit; display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+  .controls button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+  .sequence { display: flex; flex-wrap: wrap; gap: 6px; min-height: 40px; margin-top: 12px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; font: 12px var(--mono); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+  .chip.active { border-color: var(--accent); color: var(--accent); }
+  .palette { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
+  .tile { display: grid; justify-items: center; gap: 8px; padding: 14px 6px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; font: 11px var(--mono); }
+  .tile[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+  .strip { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+  .strip figure { margin: 0; display: grid; justify-items: center; gap: 4px; padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  .strip figcaption { font: 10px var(--mono); color: var(--muted); }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Morph sequencer</h1>
+    <p>Click icons to add or remove them from the sequence. Click the preview, or press Space on it, to step through. Watch for lines that bend, cross, or detour.</p>
+  </header>
+
+  <section class="stage" aria-label="Preview">
+    <div>
+      <button class="preview" id="preview" type="button" aria-label="Next icon in sequence" aria-describedby="now"></button>
+      <div class="now" id="now" aria-live="polite"></div>
+    </div>
+    <div>
+      <h2>Controls</h2>
+      <div class="controls">
+        <button type="button" id="play" aria-pressed="false">Autoplay</button>
+        <button type="button" id="slow" aria-pressed="false">Slow motion ×5</button>
+        <button type="button" id="reduced" aria-pressed="false">Reduced motion</button>
+        <button type="button" id="clear">Clear sequence</button>
+      </div>
+      <h2 style="margin-top:20px">Sequence</h2>
+      <div class="sequence" id="sequence"></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="strip-title">
+    <h2 id="strip-title">Last transition, frame by frame</h2>
+    <div class="strip" id="strip"></div>
+  </section>
+
+  <section aria-labelledby="palette-title">
+    <h2 id="palette-title">Icons</h2>
+    <div class="palette" id="palette"></div>
+  </section>
+</main>
+<script type="module">
+  import { ICONS, filmstrip, toSVG } from "./js/icons.js";
+  import { mountMorphIcon } from "./js/morph-icon.js";
+
+  const $ = id => document.getElementById(id);
+  const names = Object.keys(ICONS);
+  const params = new URLSearchParams(location.search);
+  let sequence = (params.get("seq") ?? "menu,cross,plus,minus,arrow-right,arrow-down,external,check,play,pause").split(",").filter(n => ICONS[n]);
+  let index = 0, timer = 0, reduced = false;
+
+  const preview = mountMorphIcon($("preview"), { icon: sequence[0] ?? "menu", size: 120, strokeWidth: 1.5 });
+
+  const strip = (from, to) => {
+    $("strip").innerHTML = filmstrip(from, to, { count: 9 })
+      .map(({ frame, ms }) => `<figure>${toSVG(frame, { size: 48 })}<figcaption>${ms}ms</figcaption></figure>`)
+      .join("");
+  };
+
+  const go = i => {
+    if (!sequence.length) return;
+    const from = preview.icon;
+    index = ((i % sequence.length) + sequence.length) % sequence.length;
+    const to = sequence[index];
+    preview.set(to, { instant: reduced || matchMedia("(prefers-reduced-motion: reduce)").matches });
+    if (from !== to) strip(from, to);
+    $("now").textContent = from === to ? to : `${from} → ${to}`;
+    renderSequence();
+  };
+
+  const renderSequence = () => {
+    $("sequence").replaceChildren(...sequence.map((name, i) => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = `chip${i === index ? " active" : ""}`;
+      chip.textContent = name;
+      chip.title = "Jump here";
+      chip.onclick = () => go(i);
+      return chip;
+    }));
+    for (const tile of $("palette").children) tile.setAttribute("aria-pressed", String(sequence.includes(tile.dataset.name)));
+    const url = new URL(location.href);
+    url.searchParams.set("seq", sequence.join(","));
+    history.replaceState(null, "", url);
+  };
+
+  for (const name of names) {
+    const tile = document.createElement("button");
+    tile.type = "button";
+    tile.className = "tile";
+    tile.dataset.name = name;
+    mountMorphIcon(tile, { icon: name, size: 28 });
+    tile.append(name);
+    tile.onclick = () => {
+      sequence = sequence.includes(name) ? sequence.filter(n => n !== name) : [...sequence, name];
+      index = Math.min(index, Math.max(0, sequence.length - 1));
+      renderSequence();
+    };
+    $("palette").append(tile);
+  }
+
+  $("preview").onclick = () => go(index + 1);
+  $("clear").onclick = () => { sequence = []; index = 0; renderSequence(); };
+  $("play").onclick = e => {
+    const on = e.currentTarget.getAttribute("aria-pressed") !== "true";
+    e.currentTarget.setAttribute("aria-pressed", String(on));
+    clearInterval(timer);
+    if (on) timer = setInterval(() => go(index + 1), 900);
+  };
+  $("slow").onclick = e => {
+    const on = e.currentTarget.getAttribute("aria-pressed") !== "true";
+    e.currentTarget.setAttribute("aria-pressed", String(on));
+    preview.setTimeScale(on ? 0.2 : 1);
+  };
+  $("reduced").onclick = e => {
+    reduced = e.currentTarget.getAttribute("aria-pressed") !== "true";
+    e.currentTarget.setAttribute("aria-pressed", String(reduced));
+  };
+  $("now").textContent = sequence[0] ?? "";
+  renderSequence();
+</script>
+</body>
+</html>
