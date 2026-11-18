@@ -46,6 +46,21 @@ npx skills add Sma-Das/skills --skill xyne-style
 | ![Xyne style feature tiles, light](skills/xyne-style/assets/cards-light.png) | ![Xyne style feature tiles, dark](skills/xyne-style/assets/cards-dark.png) |
 | ![Xyne style comparison bars and stat card](skills/xyne-style/assets/bars-light.png) | ![Xyne style layered diagram with stream connectors](skills/xyne-style/assets/diagram-light.png) |
 
+### Morphing icons
+
+[morphing-icons](skills/morphing-icons/SKILL.md) builds icons that morph into one another by moving three SVG lines, following Benji Taylor's [Morphing icons with Claude](https://benji.org/morphing-icons-with-claude). Menu becomes close, play becomes pause, and arrows and chevrons turn instead of warping. It includes:
+
+- a dependency-free spring engine with 22 icons that pairs lines by least travel and handles interruptions
+- a React wrapper and a Motion-based variant
+- a sequencer page with slow motion and frame strips
+- a script that audits every transition for pinching and clipping
+
+```sh
+npx skills add Sma-Das/skills --skill morphing-icons
+```
+
+![Morphing icon filmstrips: menu to cross, arrow turning, play to pause](skills/morphing-icons/assets/filmstrips.png)
+
 ### Hairline
 
 The Hairline family provides flat, typography-led interfaces, a small Go + Svelte stack, hand-built SVG charts, and restrained motion. Use its skills individually or together.
@@ -93,7 +108,7 @@ Generated, fictional data only.
 | ![Hairline UI, dark theme](skills/hairline-ui/assets/specimen-dark.png) | ![Hairline UI, light theme](skills/hairline-ui/assets/specimen-light.png) |
 | ![SVG charts, dark theme](skills/hairline-charts/assets/specimen-dark.png) | ![SVG charts, light theme](skills/hairline-charts/assets/specimen-light.png) |
 
-The interactive specimens use ES modules and must be served over HTTP. Serve the `skills/` directory on an address appropriate for your environment, then open `hairline-ui/assets/specimen.html`, `hairline-charts/assets/specimen.html`, `hairline-motion/assets/demo.html`, or `xyne-style/assets/specimen.html`. Keep sibling skill folders together for their relative asset imports.
+The interactive specimens use ES modules and must be served over HTTP. Serve the `skills/` directory on an address appropriate for your environment, then open `hairline-ui/assets/specimen.html`, `hairline-charts/assets/specimen.html`, `hairline-motion/assets/demo.html`, `xyne-style/assets/specimen.html`, or `morphing-icons/assets/sequencer.html`. Keep sibling skill folders together for their relative asset imports.
 
 ## Development
 
@@ -101,6 +116,8 @@ The interactive specimens use ES modules and must be served over HTTP. Serve the
 node scripts/check.mjs
 node --test skills/hairline-charts/assets/js/layout.test.mjs
 node skills/hairline-ui/scripts/palette.mjs --all
+node --test skills/morphing-icons/assets/js/icons.test.mjs
+node skills/morphing-icons/scripts/audit.mjs --strict
 bash skills/hairline-stack/scripts/scaffold.sh /tmp/hairline-example example.com/hairline-example "Example dashboard"
 cd /tmp/hairline-example/web/ui
 npm install

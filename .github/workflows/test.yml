@@ -16,6 +16,10 @@ jobs:
         run: node scripts/check.mjs
       - name: Test chart calculations, view state, colors, and scaffolding
         run: node --test scripts/analysis.test.mjs skills/hairline-charts/assets/js/layout.test.mjs
+      - name: Test morphing icons and audit every transition
+        run: |
+          node --test skills/morphing-icons/assets/js/icons.test.mjs
+          node skills/morphing-icons/scripts/audit.mjs --strict
       - name: Check every palette
         run: node skills/hairline-ui/scripts/palette.mjs --all
   scaffold:
