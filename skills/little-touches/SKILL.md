@@ -46,7 +46,7 @@ Keep most screens quiet. Show the next piece of UI, an explanation, or a confirm
 
 A crossfade reads as one thing disappearing and another appearing. A morph reads as one thing changing. Use morphs for icons with several states (play/pause, menu/close, plus/cross, arrow/check), status marks, and mascots.
 
-Build an icon family from the same small set of primitives, such as three SVG lines. Collapse unused primitives to an invisible point at the centre. Rotate shapes that differ only by direction (arrows, chevrons, plus versus cross at 45°) instead of interpolating their coordinates, because interpolated coordinates bend and warp halfway through. Watch every pair. Some midpoints look awkward and need a different route. The [recipes](references/recipes.md) include working code.
+Build an icon family from the same small set of primitives, such as three SVG lines. Collapse unused primitives to an invisible point at the centre. Rotate shapes that differ only by direction (arrows, chevrons, plus versus cross at 45°) instead of interpolating their coordinates, because interpolated coordinates bend and warp halfway through. Watch every pair. Some midpoints look awkward and need a different route. The [recipes](references/recipes.md) include a small working version. For a full icon set with a React wrapper, sequencer, and transition audit, use the morphing-icons skill.
 
 ## Treat edge states as places people visit
 

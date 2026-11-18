@@ -71,6 +71,7 @@ button.addEventListener("click", () => toggle.set(playing ? "pause" : "play"));
 - Each `set()` starts from the lines' current coordinates. Clicking quickly reverses the morph cleanly instead of jumping.
 - Fade a collapsing line out in the first half of the morph and a growing line in during the first half. That way you never see a stray dot.
 - The `back` shape is drawn so each chevron arm is the nearest line of the cross. Close → back then travels a short way instead of spinning.
+- For a production icon system with an audit of every pair, use the sibling [morphing-icons](../../morphing-icons/SKILL.md) skill.
 - Watch every pair you use. If a midpoint looks wrong, change the starting coordinates or route the morph through rotation.
 
 ## Directional tabs
