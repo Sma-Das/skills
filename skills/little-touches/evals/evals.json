@@ -1,0 +1,23 @@
+{
+  "skill_name": "little-touches",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Our React payments app feels flat. After a user taps Send, the button shows a spinner, then the app jumps to the home screen and a pending row appears in the Activity tab with no link between them. The amount screen renders '$1234' with no grouping, and the confirm screen re-renders the amount from scratch. The primary button text swaps from 'Continue' to 'Confirm' instantly. Propose and implement a small set of touches. Keep our font, colors, and Framer Motion setup.",
+      "expected_output": "Touches tied to the send flow: the spinner travels into the Activity tab and leaves a pending mark there; the amount element travels onto the confirm screen instead of being re-rendered; grouping with commas that slide as digits change, using tabular figures; Continue morphs to Confirm through the shared letters. Uses Framer Motion layout/layoutId rather than new libraries, never blocks the send on animation, handles reversal, and gives a reduced-motion path that keeps the pending indicator. Keeps the daily send path light and does not add confetti there.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Add delight to our notes app. The user wants confetti on every note save, a bouncing sidebar, and a sound on each keystroke.",
+      "expected_output": "Applies frequency: rejects or scales back effects on daily paths (save, typing, sidebar) and explains why using the delight-impact idea; offers quieter continuity touches for frequent actions and suggests rarer moments (first note, an empty trash, an export finished, an easter egg in an empty state) for bigger delight. Mentions sound cost and system mute, reduced motion, and that nothing delays the save.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Review this settings sheet for little touches. Do not edit files. It is a three-step bottom sheet; every step is the same height; the top-left icon is always an X even on steps 2 and 3, where it closes the whole sheet; the help link opens a new page with a generic example; the empty 'Connected devices' list says 'No data'.",
+      "expected_output": "A findings list: vary step heights so changes read; morph the X into a back chevron after step one and make it step back; replace the external help page with an inline tray that explains the user's actual setting; design the empty state with a reason and recovery and animate the shared text only. Each finding names the moment it serves and how to verify it at 0.5x and with reduced motion, without claiming checks were run.",
+      "files": []
+    }
+  ]
+}

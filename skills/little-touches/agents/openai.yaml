@@ -1,0 +1,4 @@
+interface:
+  display_name: "Little Touches"
+  short_description: "Add tasteful, organic details: travel, morphs, edge states, rare delight"
+  default_prompt: "Use $little-touches to walk this app's main flows, find the moments that deserve small details, and implement a focused set of touches that fit its design language."
