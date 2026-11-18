@@ -1,0 +1,1006 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Little touches</title>
+<!-- Serve over HTTP (ES modules do not load from file://):
+     python3 -m http.server 8765 from this folder, then open /demo.html -->
+<style>
+  :root {
+    color-scheme: light dark;
+    --speed: 1;
+    --t-fast: calc(140ms / var(--speed));
+    --t: calc(240ms / var(--speed));
+    --t-slow: calc(420ms / var(--speed));
+    --out: cubic-bezier(0.23, 1, 0.32, 1);
+    --drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+    --bg: #f3f0ea;
+    --surface: #fcfbf8;
+    --stage: #ece8df;
+    --raised: #ffffff;
+    --bezel: #dfd9cd;
+    --ink: #1c1a17;
+    --muted: #625c51;
+    --line: rgb(28 26 23 / 0.1);
+    --line-strong: rgb(28 26 23 / 0.18);
+    --accent: #1b6b4c;
+    --on-accent: #ffffff;
+    --accent-soft: rgb(27 107 76 / 0.1);
+    --quiet: #e6e1d7;
+    --danger: #ad3519;
+    --shadow: 0 1px 2px rgb(52 40 18 / 0.05), 0 10px 28px -14px rgb(52 40 18 / 0.18);
+    --shadow-small: 0 1px 2px rgb(52 40 18 / 0.1), 0 0 0 1px rgb(28 26 23 / 0.05);
+
+    --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    --round: ui-rounded, "SF Pro Rounded", ui-sans-serif, -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, sans-serif;
+    --serif: ui-serif, "New York", "Iowan Old Style", Georgia, serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #131210;
+      --surface: #1c1a17;
+      --stage: #151412;
+      --raised: #262320;
+      --bezel: #2d2a26;
+      --ink: #f1eee7;
+      --muted: #aaa497;
+      --line: rgb(255 248 235 / 0.09);
+      --line-strong: rgb(255 248 235 / 0.18);
+      --accent: #7cd3ab;
+      --on-accent: #0b1f16;
+      --accent-soft: rgb(124 211 171 / 0.13);
+      --quiet: #2a2723;
+      --danger: #ff9f88;
+      --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 12px 30px -14px rgb(0 0 0 / 0.6);
+      --shadow-small: 0 1px 2px rgb(0 0 0 / 0.4), 0 0 0 1px rgb(255 248 235 / 0.06);
+    }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 15px/1.5 var(--sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, p, ul, ol { margin: 0; }
+  ul, ol { padding: 0; list-style: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  a { color: inherit; text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* Tokens rendered by touches.js need a box so transforms apply. */
+  .lt-token, .lt-digit, .lt-sep, .lt-prefix { display: inline-block; white-space: pre; }
+
+  .page { max-width: 1080px; margin: 0 auto; padding: 56px 16px 40px; }
+  @media (min-width: 720px) { .page { padding: 80px 32px 56px; } }
+
+  /* Header */
+  .top { display: grid; gap: 28px; margin-bottom: 40px; }
+  @media (min-width: 820px) { .top { grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 48px; margin-bottom: 56px; } }
+  .kicker { color: var(--muted); font-size: 13px; letter-spacing: 0.02em; margin-bottom: 10px; }
+  h1 { font: 500 clamp(40px, 7vw, 60px)/1.02 var(--serif); letter-spacing: -0.025em; }
+  .intro { max-width: 34em; margin-top: 16px; color: var(--muted); font-size: 17px; line-height: 1.5; text-wrap: pretty; }
+  .controls { display: grid; gap: 10px; justify-items: start; }
+  @media (min-width: 820px) { .controls { justify-items: end; text-align: right; } }
+  .note { max-width: 26em; color: var(--muted); font-size: 13px; line-height: 1.45; }
+
+  /* Segmented control with a sliding indicator (speed toggle, tabs) */
+  .seg { position: relative; display: inline-flex; padding: 3px; border-radius: 12px; background: var(--quiet); box-shadow: inset 0 0 0 1px var(--line); }
+  .seg-ind { position: absolute; top: 3px; bottom: 3px; left: 0; width: var(--w, 0); transform: translateX(var(--x, 0)); border-radius: 9px; background: var(--raised); box-shadow: var(--shadow-small); }
+  .seg.ready .seg-ind { transition: transform calc(340ms / var(--speed)) var(--out), width calc(340ms / var(--speed)) var(--out); }
+  .seg button { position: relative; min-height: 34px; padding: 0 14px; border-radius: 9px; color: var(--muted); font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; transition: color var(--t-fast) ease; }
+  .seg button[aria-pressed="true"], .seg button[aria-selected="true"] { color: var(--ink); }
+
+  /* Cards */
+  .grid { display: grid; gap: 16px; }
+  @media (min-width: 860px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; } .wide { grid-column: 1 / -1; } }
+  .card { display: flex; flex-direction: column; gap: 16px; padding: 12px; border-radius: 24px; background: var(--surface); box-shadow: var(--shadow), 0 0 0 1px var(--line); min-width: 0; }
+  .card-head { padding: 10px 10px 0; }
+  .card-num { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+  .card h2 { margin-top: 2px; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+  .caption { margin-top: 6px; max-width: 40em; color: var(--muted); font-size: 14px; line-height: 1.5; text-wrap: pretty; }
+  /* Stage radius = card radius (24) - card padding (12). */
+  .stage { position: relative; flex: 1; border-radius: 12px; background: var(--stage); box-shadow: inset 0 0 0 1px var(--line); min-width: 0; }
+
+  .flagship { gap: 16px; }
+  .watch { display: grid; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; line-height: 1.45; }
+  .watch li { display: grid; grid-template-columns: 18px 1fr; gap: 8px; }
+  .watch li::before { content: ""; width: 5px; height: 5px; margin-top: 8px; border-radius: 50%; background: var(--accent); }
+  .watch b { color: var(--ink); font-weight: 500; }
+  @media (min-width: 860px) {
+    .flagship { flex-direction: row; align-items: stretch; }
+    .flagship .card-head { flex: 1; padding: 20px 20px 20px 22px; align-self: center; max-width: 440px; }
+    .flagship .stage { flex: 1.15; }
+    .flagship h2 { font-size: 22px; }
+  }
+
+  /* Buttons */
+  .primary { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; min-height: 50px; border-radius: 16px; background: var(--accent); color: var(--on-accent); font-size: 16px; font-weight: 600; letter-spacing: -0.005em; transition: background-color var(--t) ease, color var(--t) ease, transform var(--t-fast) var(--out); }
+  .primary:active { transform: scale(0.98); }
+  .primary[aria-disabled="true"], .primary[data-quiet="true"] { background: var(--quiet); color: var(--muted); }
+  .btn-label { display: inline-block; white-space: pre; transition: opacity var(--t-fast) ease; }
+  .primary[data-busy="true"] .btn-label { opacity: 0; }
+  .btn-slot { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; --spin-size: 20px; }
+  .icon-btn { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--quiet); color: var(--ink); transition: background-color var(--t-fast) ease, opacity var(--t) ease, transform var(--t-fast) var(--out); }
+  .icon-btn:active { transform: scale(0.94); }
+  .ghost { min-height: 38px; padding: 0 16px; border-radius: 12px; background: var(--raised); box-shadow: var(--shadow-small); font-size: 14px; font-weight: 500; transition: transform var(--t-fast) var(--out); }
+  .ghost:active { transform: scale(0.97); }
+
+  /* 1. Send flow */
+  .phone-stage { display: grid; place-items: center; padding: 20px 4px; }
+  @media (min-width: 420px) { .phone-stage { padding: 28px 16px; } }
+  /* Screen radius = phone radius (40) - bezel (8); inner radius = 32 - inset (16). */
+  .phone { width: min(100%, 336px); padding: 8px; border-radius: 40px; background: var(--bezel); box-shadow: var(--shadow), inset 0 0 0 1px var(--line); }
+  .screen { position: relative; display: flex; flex-direction: column; height: 596px; border-radius: 32px; background: var(--surface); box-shadow: 0 0 0 1px var(--line); overflow: hidden; }
+  .bar { position: relative; display: grid; place-items: center; height: 52px; flex: none; font-size: 15px; font-weight: 600; }
+  .bar .icon-btn { position: absolute; left: 12px; top: 8px; }
+  .bar .icon-btn:disabled { opacity: 0; pointer-events: none; }
+  .views { flex: 1; display: grid; min-height: 0; padding: 0 16px; }
+  .view { grid-area: 1 / 1; display: flex; flex-direction: column; min-width: 0; transition: visibility 0s; }
+  .view[inert] { visibility: hidden; pointer-events: none; transition: visibility 0s linear var(--t); }
+  /* Only the parts around the amount fade, so the travelling amount is never dimmed by a parent. */
+  .fade { transition: opacity var(--t) ease, transform var(--t) var(--out); }
+  .view[inert] .fade { opacity: 0; transform: translateY(6px); }
+
+  .amount-zone { flex: 1; display: grid; align-content: center; justify-items: center; gap: 6px; min-height: 0; }
+  .amount-slot { display: grid; place-items: center; height: 68px; }
+  .amount { display: inline-block; white-space: nowrap; font: 600 60px/1 var(--round); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: var(--ink); transition: color var(--t) ease; }
+  .amount[data-size="m"] { font-size: 50px; }
+  .amount[data-size="s"] { font-size: 40px; }
+  .amount[data-over="true"] { color: var(--danger); }
+  .amount .lt-prefix { font-size: 0.56em; vertical-align: 0.52em; margin-right: 0.08em; color: var(--muted); transition: color var(--t) ease; }
+  .amount[data-over="true"] .lt-prefix { color: inherit; }
+  .hint { min-height: 38px; max-width: 250px; color: var(--muted); font-size: 13px; line-height: 19px; text-align: center; font-variant-numeric: tabular-nums; transition: color var(--t) ease; }
+  .hint[data-over="true"] { color: var(--danger); }
+
+  .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding-bottom: 12px; }
+  .key { display: grid; place-items: center; height: 48px; border-radius: 16px; font: 500 22px/1 var(--round); font-variant-numeric: tabular-nums; transition: background-color var(--t) ease, transform var(--t-fast) var(--out); }
+  .key:active { background: var(--quiet); transform: scale(0.94); transition-duration: 0s, var(--t-fast); }
+
+  .review { position: relative; margin-top: 8px; padding: 18px 16px 6px; }
+  .review-bg { position: absolute; inset: 0; border-radius: 16px; background: var(--stage); box-shadow: inset 0 0 0 1px var(--line); }
+  .review > :not(.review-bg) { position: relative; }
+  .review-eyebrow { color: var(--muted); font-size: 13px; font-weight: 500; text-align: center; }
+  .review .amount-slot { height: 60px; }
+  .review .amount { font-size: 40px; }
+  .rows { margin-top: 8px; font-size: 14px; }
+  .rows li { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-top: 1px solid var(--line); }
+  .rows span:first-child { color: var(--muted); }
+  .rows span:last-child { font-weight: 500; font-variant-numeric: tabular-nums; }
+
+  .action { flex: none; padding: 0 16px 12px; }
+  .tabbar { flex: none; display: grid; grid-template-columns: repeat(3, 1fr); height: 60px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; font-weight: 500; }
+  .tab { display: grid; justify-items: center; align-content: center; gap: 3px; }
+  .tab[data-active="true"] { color: var(--ink); }
+  .tab-icon { position: relative; width: 22px; height: 22px; }
+  .tab-icon svg.glyph { display: block; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: opacity var(--t) ease, transform var(--t) var(--out); }
+  .tab[data-pending="true"] .glyph { opacity: 0; transform: scale(0.6); }
+  .tab-slot { position: absolute; inset: 0; --spin-size: 22px; color: var(--accent); }
+  .tab-dot { position: absolute; top: -1px; right: -3px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 2px var(--surface); transform: scale(0); transition: transform var(--t) var(--out); }
+  .tab[data-new="true"] .tab-dot { transform: scale(1); }
+
+  .spin { position: relative; display: block; width: var(--spin-size, 20px); height: var(--spin-size, 20px); transition: color var(--t-slow) ease; }
+  .spin-ring { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; animation: spin calc(850ms / var(--speed)) linear infinite; }
+  .spin-ring circle { stroke-dasharray: 68 32; transition: stroke-dasharray var(--t-slow) var(--out); }
+  .spin[data-done="true"] .spin-ring circle { stroke-dasharray: 100 0; }
+  .spin-mark { position: absolute; inset: 0; margin: auto; opacity: 0; transition: opacity var(--t) ease; }
+  .spin[data-done="true"] .spin-mark { opacity: 1; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes breathe { 50% { opacity: 0.45; } }
+
+  /* 2. Stepped sheet */
+  .sheet-stage { min-height: 472px; overflow: hidden; }
+  .sheet-open { position: absolute; inset: 0; margin: auto; width: max-content; height: max-content; }
+  .tray-wrap { position: absolute; left: 12px; right: 12px; bottom: 12px; transition: transform var(--t-slow) var(--drawer), opacity var(--t) ease, visibility 0s; }
+  .tray-wrap[inert] { transform: translateY(calc(100% + 16px)); opacity: 0; visibility: hidden; transition: transform var(--t-slow) var(--drawer), opacity var(--t-slow) ease, visibility 0s linear var(--t-slow); }
+  .tray { max-width: 380px; margin: 0 auto; padding: 16px; border-radius: 28px; background: var(--surface); box-shadow: var(--shadow), 0 0 0 1px var(--line); }
+  .tray-head { display: flex; align-items: center; justify-content: space-between; }
+  .tray-count { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+  .tray-body { padding: 14px 2px 16px; }
+  .tray-body h3 { font-size: 20px; font-weight: 600; letter-spacing: -0.015em; }
+  .tray-body p { margin-top: 6px; color: var(--muted); font-size: 14px; }
+  /* Row radius = tray radius (28) - tray padding (16). */
+  .opts { display: grid; gap: 6px; margin-top: 14px; }
+  .opts li { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-radius: 12px; background: var(--stage); font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .opts li span:last-child { color: var(--muted); font-weight: 400; }
+  .opts li.total { background: none; box-shadow: inset 0 0 0 1px var(--line-strong); }
+  .opts li.total span:last-child { color: var(--ink); font-weight: 600; }
+  .tray .primary { border-radius: 12px; min-height: 46px; font-size: 15px; }
+  .tray-foot { margin-top: 12px; color: var(--muted); font-size: 13px; text-align: center; }
+
+  /* 3. Icon morphs */
+  .icon-stage { display: grid; gap: 14px; padding: 20px 16px 16px; align-content: center; }
+  .icon-big { display: grid; place-items: center; height: 156px; color: var(--ink); }
+  .icon-name { color: var(--muted); font: 13px/1 ui-monospace, "SF Mono", Menlo, Consolas, monospace; text-align: center; }
+  .icon-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 6px; padding-top: 6px; }
+  .chip-icon { display: grid; place-items: center; height: 40px; border-radius: 10px; color: var(--muted); transition: background-color var(--t-fast) ease, color var(--t-fast) ease, box-shadow var(--t-fast) ease, transform var(--t-fast) var(--out); }
+  .chip-icon:active { transform: scale(0.92); }
+  .chip-icon[aria-pressed="true"] { background: var(--raised); color: var(--ink); box-shadow: var(--shadow-small); }
+
+  /* 4. Directional tabs */
+  .tabs-stage { padding: 16px; display: grid; gap: 14px; align-content: start; }
+  .tabs-stage .seg { display: flex; }
+  .tabs-stage .seg button { flex: 1; padding: 0 6px; }
+  .panels { display: grid; overflow: hidden; border-radius: 12px; }
+  .panel { grid-area: 1 / 1; padding: 6px 4px 2px; }
+  .panel[inert] { opacity: 0; pointer-events: none; }
+  .panel-label { color: var(--muted); font-size: 13px; }
+  .panel-figure { margin-top: 2px; font: 600 38px/1.1 var(--round); letter-spacing: -0.025em; font-variant-numeric: tabular-nums; }
+  .panel .rows { margin-top: 14px; }
+  .panel .rows li:first-child { border-top-color: var(--line-strong); }
+
+  /* 5. Empty state */
+  .notes-stage { padding: 16px; display: grid; gap: 12px; align-content: start; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { min-height: 36px; padding: 0 14px; border-radius: 18px; box-shadow: inset 0 0 0 1px var(--line-strong); color: var(--muted); font-size: 14px; font-weight: 500; transition: background-color var(--t-fast) ease, color var(--t-fast) ease, box-shadow var(--t-fast) ease, transform var(--t-fast) var(--out); }
+  .chip:active { transform: scale(0.96); }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--surface); box-shadow: none; }
+  .notes-body { border-radius: 12px; background: var(--surface); box-shadow: 0 0 0 1px var(--line); }
+  .note-row { display: flex; align-items: center; gap: 10px; padding: 9px 8px 9px 14px; }
+  .note-row + .note-row { border-top: 1px solid var(--line); }
+  .note-text { flex: 1; min-width: 0; }
+  .note-title { font-size: 14px; font-weight: 500; }
+  .note-meta { color: var(--muted); font-size: 13px; }
+  .star { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; color: var(--muted); transition: color var(--t-fast) ease, background-color var(--t-fast) ease; }
+  .star svg { width: 18px; height: 18px; fill: transparent; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; transition: fill var(--t-fast) ease, transform var(--t) var(--out); }
+  .star[aria-pressed="true"] { color: var(--accent); }
+  .star[aria-pressed="true"] svg { fill: currentColor; transform: scale(1.08); }
+  .empty { display: grid; justify-items: center; gap: 4px; padding: 30px 16px 26px; text-align: center; }
+  .empty-mark { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 8px; border-radius: 50%; border: 1px dashed var(--line-strong); color: var(--muted); }
+  .empty-title { font-size: 15px; font-weight: 600; }
+  .empty-sub { color: var(--muted); font-size: 13px; }
+  .empty .ghost { margin-top: 12px; background: var(--quiet); box-shadow: none; }
+
+  footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+
+  @media (hover: hover) and (pointer: fine) {
+    a:hover { text-decoration-color: currentColor; }
+    .seg button:hover { color: var(--ink); }
+    .icon-btn:hover { background: color-mix(in srgb, var(--quiet) 80%, var(--ink)); }
+    .key:hover { background: var(--stage); }
+    .chip-icon:hover { color: var(--ink); background: color-mix(in srgb, var(--stage) 88%, var(--ink)); }
+    .chip-icon[aria-pressed="true"]:hover { background: var(--raised); }
+    .chip:hover { color: var(--ink); }
+    .chip[aria-pressed="true"]:hover { color: var(--surface); }
+    .star:hover { background: var(--stage); }
+    .primary:not([aria-disabled="true"]):not([data-quiet="true"]):hover { background: color-mix(in srgb, var(--accent) 90%, var(--ink)); }
+  }
+
+  /* Reduced motion: keep fades and colour, drop movement. Helpers handle their own. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-property: opacity, color, background-color, box-shadow, fill, visibility !important; }
+    .primary:active, .key:active, .icon-btn:active, .chip:active, .chip-icon:active, .ghost:active { transform: none; }
+    .view[inert] .fade { transform: none; }
+    .tray-wrap[inert] { transform: none; }
+    .spin-ring { animation: breathe 1.4s ease-in-out infinite; }
+    .spin[data-done="true"] .spin-ring { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="kicker">Specimen</p>
+      <h1>Little touches</h1>
+      <p class="intro">Five small details that help people follow what changed. Things travel instead of being replaced, and only the part that differs moves.</p>
+    </div>
+    <div class="controls">
+      <div class="seg" id="speed" role="group" aria-label="Animation speed">
+        <span class="seg-ind" aria-hidden="true"></span>
+        <button type="button" data-speed="1" aria-pressed="true" aria-label="Full speed">1×</button>
+        <button type="button" data-speed="0.5" aria-pressed="false" aria-label="Half speed">0.5×</button>
+      </div>
+      <p class="note">Reduced motion is honored: everything reaches the same end state without travelling. <span id="rm-state"></span></p>
+    </div>
+  </header>
+
+  <main class="grid">
+    <!-- 1. Send flow -->
+    <section class="card wide flagship" aria-labelledby="h-send">
+      <div class="card-head">
+        <p class="card-num">01</p>
+        <h2 id="h-send">Send flow</h2>
+        <p class="caption">The amount you type is the same element you confirm, and the spinner leaves the button for the tab where the result will appear. You always know what was sent and where to look next.</p>
+        <ul class="watch">
+          <li><span><b>Commas slide.</b> Type four digits and the separator moves into place.</span></li>
+          <li><span><b>“Con” holds still</b> while Continue becomes Confirm.</span></li>
+          <li><span><b>The amount travels</b> to the review screen. It is moved, never copied.</span></li>
+          <li><span><b>The spinner lands on Activity</b> and waits there as a pending ring.</span></li>
+          <li><span><b>Go over $2,400</b> to see the over-balance state.</span></li>
+        </ul>
+      </div>
+      <div class="stage phone-stage">
+        <div class="phone" id="phone">
+          <div class="screen">
+            <div class="bar">
+              <button type="button" class="icon-btn" id="send-back" aria-label="Back to amount" disabled></button>
+              <span>Send</span>
+            </div>
+            <div class="views">
+              <div class="view" id="view-entry">
+                <div class="amount-zone">
+                  <div class="amount-slot" id="entry-slot"><div class="amount" id="amount" role="img" aria-label="$0"></div></div>
+                  <p class="hint fade" id="hint">Balance $2,400.00</p>
+                </div>
+                <div class="keypad fade" id="keypad" role="group" aria-label="Amount keypad"></div>
+              </div>
+              <div class="view" id="view-confirm" inert>
+                <div class="review">
+                  <div class="review-bg fade"></div>
+                  <p class="review-eyebrow fade" id="review-eyebrow" aria-hidden="true">Review</p>
+                  <div class="amount-slot" id="confirm-slot"></div>
+                  <ul class="rows fade">
+                    <li><span>To</span><span>Sam Rivera</span></li>
+                    <li><span>From</span><span>Main balance</span></li>
+                    <li><span>Fee</span><span>None</span></li>
+                    <li><span>Arrives</span><span>In a few seconds</span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="action">
+              <button type="button" class="primary" id="send-primary" aria-label="Continue" aria-disabled="true">
+                <span class="btn-label" id="send-label" aria-hidden="true">Continue</span>
+                <span class="btn-slot" id="send-slot"></span>
+              </button>
+            </div>
+            <div class="tabbar" aria-hidden="true">
+              <div class="tab">
+                <span class="tab-icon"><svg class="glyph" viewBox="0 0 20 20"><path d="M3.5 8.8 10 3.5l6.5 5.3v6.7a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z"/></svg></span>
+                Home
+              </div>
+              <div class="tab" data-active="true">
+                <span class="tab-icon"><svg class="glyph" viewBox="0 0 20 20"><path d="M5 15 15 5M8 5h7v7"/></svg></span>
+                Send
+              </div>
+              <div class="tab" id="tab-activity">
+                <span class="tab-icon">
+                  <svg class="glyph" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7.25"/><path d="M10 6.2V10l2.4 2.2"/></svg>
+                  <span class="tab-slot" id="tab-slot"></span>
+                  <span class="tab-dot"></span>
+                </span>
+                Activity
+              </div>
+            </div>
+            <p class="sr" id="send-status" role="status"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Stepped sheet -->
+    <section class="card" aria-labelledby="h-sheet">
+      <div class="card-head">
+        <p class="card-num">02</p>
+        <h2 id="h-sheet">Stepped sheet</h2>
+        <p class="caption">Each step has its own height, and one icon closes the sheet or steps back. The height change shows that the step changed, and the icon shows how to undo it.</p>
+      </div>
+      <div class="stage sheet-stage">
+        <button type="button" class="ghost sheet-open" id="sheet-open" hidden>Open sheet</button>
+        <div class="tray-wrap" id="tray-wrap">
+          <div class="tray" id="tray" role="group" aria-label="Wallet setup">
+            <div class="tray-head">
+              <button type="button" class="icon-btn" id="tray-nav" aria-label="Close"></button>
+              <span class="tray-count" id="tray-count">1 of 3</span>
+            </div>
+            <div class="tray-body" id="tray-body"></div>
+            <button type="button" class="primary" id="tray-cta" aria-label="Next"><span class="btn-label" id="tray-cta-label" aria-hidden="true">Next</span></button>
+            <p class="tray-foot" id="tray-foot">Learn more about tokens</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Icon morphs -->
+    <section class="card" aria-labelledby="h-icons">
+      <div class="card-head">
+        <p class="card-num">03</p>
+        <h2 id="h-icons">Icon morphs</h2>
+        <p class="caption">Every icon is the same three lines redrawn, so one shape changes instead of two crossfading. Click quickly: each morph starts from wherever the lines are.</p>
+      </div>
+      <div class="stage icon-stage">
+        <div class="icon-big" id="icon-big"></div>
+        <p class="icon-name" id="icon-name" aria-hidden="true">menu</p>
+        <div class="icon-row" id="icon-row" role="group" aria-label="Icon"></div>
+      </div>
+    </section>
+
+    <!-- 4. Directional tabs -->
+    <section class="card" aria-labelledby="h-tabs">
+      <div class="card-head">
+        <p class="card-num">04</p>
+        <h2 id="h-tabs">Directional tabs</h2>
+        <p class="caption">Content moves toward the tab you picked and the marker slides with it, so you can see which way you went.</p>
+      </div>
+      <div class="stage tabs-stage">
+        <div class="seg" id="tabs" role="tablist" aria-label="Spending period"><span class="seg-ind" aria-hidden="true"></span></div>
+        <div class="panels" id="panels"></div>
+      </div>
+    </section>
+
+    <!-- 5. Empty state -->
+    <section class="card" aria-labelledby="h-empty">
+      <div class="card-head">
+        <p class="card-num">05</p>
+        <h2 id="h-empty">Empty state</h2>
+        <p class="caption">When a filter finds nothing, the sentence stays and only the noun changes. It still reads as the same list, and there is a way back.</p>
+      </div>
+      <div class="stage notes-stage">
+        <div class="chips" id="chips" role="group" aria-label="Filter notes">
+          <button type="button" class="chip" data-filter="all" aria-pressed="true">All</button>
+          <button type="button" class="chip" data-filter="starred" aria-pressed="false">Starred</button>
+          <button type="button" class="chip" data-filter="archived" aria-pressed="false">Archived</button>
+        </div>
+        <div class="notes-body" id="notes-body">
+          <ul id="note-list"></ul>
+          <div class="empty" id="empty" role="status" hidden>
+            <span class="empty-mark" id="empty-mark"></span>
+            <p class="empty-title" id="empty-title">No starred notes yet</p>
+            <p class="empty-sub" id="empty-sub">Tap a star to keep a note here.</p>
+            <button type="button" class="ghost" id="clear-filter">Clear filter</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Patterns distilled from Benji Taylor's <a href="https://x.com/benjitaylor">posts</a> and <a href="https://benji.org/family-values">essays (benji.org)</a>.</p>
+  </footer>
+</div>
+
+<template id="step-0">
+  <h3>Choose a token</h3>
+  <p>Pick what to hold first. You can add more later.</p>
+  <ul class="opts"><li><span>Dollar</span><span>USD</span></li><li><span>Euro</span><span>EUR</span></li></ul>
+</template>
+<template id="step-1">
+  <h3>Check the fees</h3>
+  <p>Fees are shown before every send, so the total is never a surprise.</p>
+  <ul class="opts"><li><span>Network</span><span>$0.12</span></li><li><span>Service</span><span>$0.00</span></li><li class="total"><span>Total per send</span><span>$0.12</span></li></ul>
+</template>
+<template id="step-2">
+  <h3>Turn on backups</h3>
+  <p>A backup lets you restore this wallet on a new phone.</p>
+</template>
+
+<script type="module">
+import { config, ease, reduced, setSpeed, moveInto, morphText, renderNumber, resizeAround, slidePanels, createIcon, icons, haptic } from "./touches.js";
+
+const $ = (sel, root = document) => root.querySelector(sel);
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms / config.speed));
+
+/** Page-level animation that follows the speed toggle and drops movement under reduced motion. */
+function anim(el, keyframes, duration, easing = ease.out) {
+  let frames = keyframes;
+  if (reduced()) {
+    frames = keyframes.map(({ transform, ...rest }) => rest);
+    if (!frames.some((f) => Object.keys(f).length)) return null;
+  }
+  return el.animate(frames, { duration: duration / config.speed, easing });
+}
+
+/** Set text without animation, clearing morphText's memory of the old string. */
+function setText(el, text) {
+  el.textContent = text;
+  delete el.dataset.text;
+}
+
+/** Sliding marker for a segmented control. */
+function segmented(root) {
+  const ind = $(".seg-ind", root);
+  let current = null;
+  const place = (btn = current) => {
+    if (!btn) return;
+    current = btn;
+    ind.style.setProperty("--x", `${btn.offsetLeft}px`);
+    ind.style.setProperty("--w", `${btn.offsetWidth}px`);
+  };
+  new ResizeObserver(() => {
+    root.classList.remove("ready");
+    place();
+    requestAnimationFrame(() => root.classList.add("ready"));
+  }).observe(root);
+  return place;
+}
+
+/* ---------- Header: speed and reduced-motion note ---------- */
+{
+  const root = $("#speed");
+  const place = segmented(root);
+  const buttons = [...root.querySelectorAll("button")];
+  place(buttons[0]);
+  root.addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    const speed = Number(btn.dataset.speed);
+    setSpeed(speed);
+    document.documentElement.style.setProperty("--speed", speed);
+    buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+    place(btn);
+  });
+  const query = matchMedia("(prefers-reduced-motion: reduce)");
+  const show = () => { $("#rm-state").textContent = query.matches ? "It is on now." : "It is off now."; };
+  query.addEventListener("change", show);
+  show();
+}
+
+/* ---------- 1. Send flow ---------- */
+{
+  const BALANCE = 2400;
+  const PAYEE = "Sam Rivera";
+  const amount = $("#amount");
+  const entrySlot = $("#entry-slot");
+  const confirmSlot = $("#confirm-slot");
+  const hint = $("#hint");
+  const views = { entry: $("#view-entry"), confirm: $("#view-confirm") };
+  const primary = $("#send-primary");
+  const label = $("#send-label");
+  const btnSlot = $("#send-slot");
+  const tab = $("#tab-activity");
+  const tabSlot = $("#tab-slot");
+  const status = $("#send-status");
+  const eyebrow = $("#review-eyebrow");
+  const back = $("#send-back");
+  const keypad = $("#keypad");
+  const sizes = { l: 60, m: 50, s: 40 };
+
+  back.append(createIcon("back", { size: 16, strokeWidth: 1.6 }).el);
+
+  let digits = "";
+  let state = "entry"; // entry -> confirm -> sending -> pending -> sent
+  let over = false;
+  let hintText = hint.textContent;
+  let spinner = null;
+  let run = 0;
+  let confirmAt = 0;
+
+  const value = () => Number(digits || 0);
+  const money = (n) => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  for (const key of ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "back"]) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "key";
+    btn.dataset.key = key;
+    if (key === "back") {
+      btn.setAttribute("aria-label", "Delete");
+      btn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h9.5A1.5 1.5 0 0 1 20 7.5v9a1.5 1.5 0 0 1-1.5 1.5H9l-5-6z"/><path d="m12 10 4 4m0-4-4 4"/></svg>';
+    } else {
+      btn.textContent = key;
+      if (key === ".") btn.setAttribute("aria-label", "Decimal point");
+    }
+    keypad.append(btn);
+  }
+
+  function shake(strength = 7) {
+    haptic(10);
+    const s = strength;
+    anim(amount, [0, -s, s, -s * 0.6, s * 0.6, -s * 0.25, 0].map((x) => ({ transform: `translateX(${x}px)` })), 420, "ease-out");
+  }
+
+  function say(text) {
+    status.textContent = text;
+  }
+
+  function setLabel(text) {
+    morphText(label, text, { by: "char" });
+    primary.setAttribute("aria-label", text);
+  }
+
+  function setHint(text) {
+    if (text === hintText) return;
+    hintText = text;
+    morphText(hint, text);
+  }
+
+  function update() {
+    const [int = ""] = digits.split(".");
+    const glyphs = 1 + (digits || "0").length + Math.floor((Math.max(int.length, 1) - 1) / 3);
+    const size = glyphs <= 6 ? "l" : glyphs <= 8 ? "m" : "s";
+    const prev = amount.dataset.size || "l";
+    amount.dataset.size = size;
+    renderNumber(amount, digits);
+    if (prev !== size && state === "entry") {
+      // The font steps down for long amounts: ease the step instead of jumping.
+      const k = sizes[prev] / sizes[size];
+      anim(amount, [{ transform: `scale(${k})` }, { transform: "none" }], 300);
+    }
+
+    const v = value();
+    const wasOver = over;
+    over = v > BALANCE;
+    amount.dataset.over = String(over);
+    hint.dataset.over = String(over);
+    // The error always names the balance. The extra word is the small reward for going far over.
+    const tail = `over your balance of ${money(BALANCE)}`;
+    setHint(!over ? `Balance ${money(BALANCE)}`
+      : v >= 100000 ? `Very generous, but ${tail}`
+      : v >= 24000 ? `Generous, but ${tail}`
+      : `That is ${tail}`);
+    if (over && !wasOver) shake();
+    primary.setAttribute("aria-disabled", String(v <= 0 || over));
+  }
+
+  function press(key) {
+    if (state !== "entry") return;
+    let next = digits;
+    if (key === "back") {
+      if (!next) return;
+      next = next.slice(0, -1);
+    } else if (key === ".") {
+      if (next.includes(".")) return shake(3);
+      next = (next || "0") + ".";
+    } else {
+      const [int, frac] = next.split(".");
+      if (frac !== undefined) {
+        if (frac.length >= 2) return shake(3);
+      } else if (int === "0") next = "";
+      else if (int.length >= 6) return shake(3);
+      next += key;
+    }
+    digits = next;
+    haptic();
+    update();
+  }
+
+  function show(name) {
+    for (const [key, view] of Object.entries(views)) view.inert = key !== name;
+    back.disabled = name !== "confirm" || state !== "confirm";
+  }
+
+  function toConfirm() {
+    state = "confirm";
+    confirmAt = performance.now();
+    setText(eyebrow, "Review");
+    show("confirm");
+    moveInto(amount, confirmSlot); // the same element, not a copy
+    setLabel("Confirm");
+    say(`Review: ${money(value())} to ${PAYEE}.`);
+  }
+
+  function toEntry() {
+    const hadFocus = document.activeElement === back;
+    state = "entry";
+    show("entry");
+    moveInto(amount, entrySlot);
+    setLabel("Continue");
+    if (hadFocus) primary.focus();
+  }
+
+  function makeSpinner() {
+    const el = document.createElement("span");
+    el.className = "spin";
+    el.innerHTML = '<svg class="spin-ring" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.25" pathLength="100"/></svg>';
+    const mark = createIcon("minus", { size: 12, strokeWidth: 2 });
+    mark.el.classList.add("spin-mark");
+    el.append(mark.el);
+    return { el, mark };
+  }
+
+  // State is driven by timers standing in for the network, never by animation ends.
+  async function send() {
+    const id = ++run;
+    const sum = money(value());
+    state = "sending";
+    back.disabled = true;
+    primary.dataset.busy = "true";
+    primary.setAttribute("aria-busy", "true");
+    morphText(eyebrow, "Sending", { by: "char" });
+    say(`Sending ${sum} to ${PAYEE}…`);
+    spinner = makeSpinner();
+    btnSlot.append(spinner.el);
+    anim(spinner.el, [{ opacity: 0, transform: "scale(0.6)" }, { opacity: 1, transform: "none" }], 240);
+
+    await wait(900);
+    if (id !== run) return;
+    state = "pending";
+    // The spinner leaves the button and lands where the result will show up.
+    moveInto(spinner.el, tabSlot, { duration: 620 });
+    tab.dataset.pending = "true";
+    tab.dataset.new = "false";
+    primary.dataset.busy = "false";
+    primary.dataset.quiet = "true";
+    setLabel("Sending…");
+
+    await wait(1600);
+    if (id !== run) return;
+    state = "sent";
+    spinner.el.dataset.done = "true";
+    spinner.mark.set("check");
+    haptic([12, 40, 12]);
+    primary.dataset.quiet = "false";
+    primary.removeAttribute("aria-busy");
+    morphText(eyebrow, "Sent", { by: "char" });
+    setLabel("Send again");
+    say(`Sent ${sum} to ${PAYEE}. It is listed in Activity.`);
+  }
+
+  function reset() {
+    run++;
+    state = "entry";
+    digits = "";
+    show("entry");
+    moveInto(amount, entrySlot);
+    update();
+    setLabel("Continue");
+    say("");
+    if (spinner) {
+      const { el } = spinner;
+      spinner = null;
+      const out = anim(el, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "scale(0.6)" }], 200);
+      el.style.opacity = "0";
+      if (out) out.finished.then(() => el.remove(), () => el.remove());
+      else el.remove();
+    }
+    tab.dataset.pending = "false";
+    tab.dataset.new = "true"; // a quiet dot: there is something new in Activity
+  }
+
+  primary.addEventListener("click", () => {
+    if (state === "entry") {
+      if (value() <= 0) { shake(3); return say("Enter an amount first."); }
+      if (over) { shake(); return say(`${hintText}.`); }
+      toConfirm();
+    } else if (state === "confirm") {
+      // A double tap on Continue must not also confirm the send.
+      if (performance.now() - confirmAt > 400) send();
+    }
+    else if (state === "sent") reset();
+    // sending and pending: in flight, extra taps are ignored
+  });
+  back.addEventListener("click", () => { if (state === "confirm") toEntry(); });
+  keypad.addEventListener("click", (e) => {
+    const btn = e.target.closest(".key");
+    if (btn) press(btn.dataset.key);
+  });
+  $("#phone").addEventListener("keydown", (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey || state !== "entry") return;
+    if (/^[0-9.]$/.test(e.key)) press(e.key);
+    else if (e.key === "Backspace") press("back");
+    else return;
+    e.preventDefault();
+  });
+
+  update();
+}
+
+/* ---------- 2. Stepped sheet ---------- */
+{
+  const wrap = $("#tray-wrap");
+  const tray = $("#tray");
+  const body = $("#tray-body");
+  const navBtn = $("#tray-nav");
+  const cta = $("#tray-cta");
+  const ctaLabel = $("#tray-cta-label");
+  const foot = $("#tray-foot");
+  const count = $("#tray-count");
+  const openBtn = $("#sheet-open");
+  const topics = ["tokens", "fees", "backups"];
+  const nav = createIcon("close", { size: 16, strokeWidth: 1.6 });
+  navBtn.append(nav.el);
+  let step = 0;
+
+  const content = (i) => $(`#step-${i}`).content.cloneNode(true);
+  body.append(content(0));
+
+  function go(next) {
+    const dir = Math.sign(next - step);
+    step = next;
+    resizeAround(tray, () => body.replaceChildren(content(step)));
+    anim(body, [{ opacity: 0, transform: `translateX(${dir * 18}px)` }, { opacity: 1, transform: "none" }], 340);
+    nav.set(step === 0 ? "close" : "back");
+    navBtn.setAttribute("aria-label", step === 0 ? "Close" : "Back");
+    const cue = step === topics.length - 1 ? "Done" : "Next";
+    morphText(ctaLabel, cue, { by: "char" });
+    cta.setAttribute("aria-label", cue);
+    morphText(count, `${step + 1} of ${topics.length}`);
+    morphText(foot, `Learn more about ${topics[step]}`);
+  }
+
+  function setOpen(open) {
+    wrap.inert = !open;
+    openBtn.hidden = open;
+    if (open) {
+      if (step !== 0) go(0);
+      navBtn.focus({ preventScroll: true });
+    } else {
+      anim(openBtn, [{ opacity: 0, transform: "scale(0.96)" }, { opacity: 1, transform: "none" }], 260);
+      openBtn.focus({ preventScroll: true });
+    }
+  }
+
+  navBtn.addEventListener("click", () => (step === 0 ? setOpen(false) : go(step - 1)));
+  cta.addEventListener("click", () => (step === topics.length - 1 ? setOpen(false) : go(step + 1)));
+  openBtn.addEventListener("click", () => setOpen(true));
+  tray.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    step === 0 ? setOpen(false) : go(step - 1);
+  });
+}
+
+/* ---------- 3. Icon morphs ---------- */
+{
+  const names = ["menu", "close", "back", "plus", "cross", "minus", "check", "play", "pause",
+    "arrow-right", "arrow-down", "arrow-left", "arrow-up",
+    "chevron-right", "chevron-down", "chevron-left", "chevron-up"].filter((n) => icons[n]);
+  const big = createIcon("menu", { size: 112, strokeWidth: 1.1, label: "menu" });
+  $("#icon-big").append(big.el);
+  const nameEl = $("#icon-name");
+  const row = $("#icon-row");
+  for (const name of names) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "chip-icon";
+    btn.dataset.icon = name;
+    btn.setAttribute("aria-label", name.replace("-", " "));
+    btn.setAttribute("aria-pressed", String(name === "menu"));
+    btn.append(createIcon(name, { size: 18 }).el);
+    row.append(btn);
+  }
+  row.addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    big.set(btn.dataset.icon, { duration: 360 });
+    morphText(nameEl, btn.dataset.icon, { by: "char" });
+    for (const b of row.children) b.setAttribute("aria-pressed", String(b === btn));
+  });
+}
+
+/* ---------- 4. Directional tabs ---------- */
+{
+  const data = [
+    { name: "Day", label: "Spent today", total: "$48.20", rows: [["Coffee", "$4.50"], ["Lunch", "$16.80"], ["Train", "$26.90"]] },
+    { name: "Week", total: "$312.75", rows: [["Groceries", "$124.10"], ["Eating out", "$96.40"], ["Transport", "$92.25"]] },
+    { name: "Month", total: "$1,486.00", rows: [["Rent share", "$900.00"], ["Groceries", "$388.00"], ["Everything else", "$198.00"]] },
+    { name: "Year", total: "$17,904.30", rows: [["Home", "$10,800.00"], ["Food", "$4,912.30"], ["Travel", "$2,192.00"]] },
+  ];
+  const tabs = $("#tabs");
+  const panelsEl = $("#panels");
+  const place = segmented(tabs);
+  const buttons = [];
+  const panels = [];
+  let current = 0;
+
+  data.forEach((d, i) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = `tab-${i}`;
+    btn.setAttribute("role", "tab");
+    btn.setAttribute("aria-controls", `panel-${i}`);
+    btn.setAttribute("aria-selected", String(i === 0));
+    btn.tabIndex = i === 0 ? 0 : -1;
+    btn.textContent = d.name;
+    tabs.append(btn);
+    buttons.push(btn);
+
+    const panel = document.createElement("div");
+    panel.className = "panel";
+    panel.id = `panel-${i}`;
+    panel.setAttribute("role", "tabpanel");
+    panel.setAttribute("aria-labelledby", btn.id);
+    panel.inert = i !== 0;
+    panel.innerHTML = `<p class="panel-label">${d.label ?? `Spent this ${d.name.toLowerCase()}`}</p><p class="panel-figure">${d.total}</p>
+      <ul class="rows">${d.rows.map(([k, v]) => `<li><span>${k}</span><span>${v}</span></li>`).join("")}</ul>`;
+    panelsEl.append(panel);
+    panels.push(panel);
+  });
+  place(buttons[0]);
+
+  function select(i, focus = false) {
+    if (focus) buttons[i].focus();
+    if (i === current) return;
+    const dir = Math.sign(i - current);
+    const from = panels[current];
+    const to = panels[i];
+    buttons.forEach((b, n) => {
+      b.setAttribute("aria-selected", String(n === i));
+      b.tabIndex = n === i ? 0 : -1;
+    });
+    from.inert = true;
+    to.inert = false;
+    current = i;
+    place(buttons[i]);
+    slidePanels(from, to, dir);
+  }
+
+  tabs.addEventListener("click", (e) => {
+    const i = buttons.indexOf(e.target.closest("button"));
+    if (i >= 0) select(i);
+  });
+  tabs.addEventListener("keydown", (e) => {
+    const last = buttons.length - 1;
+    const next = { ArrowRight: Math.min(last, current + 1), ArrowLeft: Math.max(0, current - 1), Home: 0, End: last }[e.key];
+    if (next === undefined) return;
+    e.preventDefault();
+    select(next, true);
+  });
+}
+
+/* ---------- 5. Empty state ---------- */
+{
+  const notes = [
+    { title: "Groceries", meta: "Milk, oats, lemons" },
+    { title: "Trip ideas", meta: "Lisbon in May" },
+    { title: "Book list", meta: "Three left to finish" },
+    { title: "Garden", meta: "Water the fig on Friday" },
+  ].map((n) => ({ ...n, starred: false, archived: false }));
+  const subs = { starred: "Tap a star to keep a note here.", archived: "Notes you archive will rest here." };
+  const body = $("#notes-body");
+  const list = $("#note-list");
+  const empty = $("#empty");
+  const title = $("#empty-title");
+  const sub = $("#empty-sub");
+  const chips = [...$("#chips").children];
+  let filter = "all";
+
+  $("#empty-mark").append(createIcon("minus", { size: 16 }).el);
+
+  for (const note of notes) {
+    const li = document.createElement("li");
+    li.className = "note-row";
+    li.innerHTML = `<div class="note-text"><p class="note-title">${note.title}</p><p class="note-meta">${note.meta}</p></div>
+      <button type="button" class="star" aria-pressed="false" aria-label="Star ${note.title}"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m10 2.9 2.2 4.4 4.9.7-3.5 3.5.8 4.8L10 14l-4.4 2.3.8-4.8L2.9 8l4.9-.7z"/></svg></button>`;
+    note.row = li;
+    li.querySelector(".star").addEventListener("click", (e) => {
+      note.starred = !note.starred;
+      e.currentTarget.setAttribute("aria-pressed", String(note.starred));
+      haptic();
+      if (filter === "starred") apply();
+    });
+    list.append(li);
+  }
+
+  const matches = (n) => filter === "all" || n[filter];
+
+  function apply() {
+    const isEmpty = !notes.some(matches);
+    const wasEmpty = !empty.hidden;
+    const sentence = `No ${filter} notes yet`;
+    if (isEmpty && wasEmpty) {
+      // Same sentence, different noun: only the noun moves.
+      morphText(title, sentence);
+      morphText(sub, subs[filter]);
+      return;
+    }
+    resizeAround(body, () => {
+      for (const n of notes) n.row.hidden = !matches(n);
+      list.hidden = isEmpty;
+      empty.hidden = !isEmpty;
+      if (isEmpty) {
+        setText(title, sentence);
+        setText(sub, subs[filter]);
+      }
+    });
+    anim(isEmpty ? empty : list, [{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }], 300);
+  }
+
+  function setFilter(next) {
+    if (next === filter) return;
+    filter = next;
+    chips.forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.filter === filter)));
+    apply();
+  }
+
+  $("#chips").addEventListener("click", (e) => {
+    const chip = e.target.closest(".chip");
+    if (chip) setFilter(chip.dataset.filter);
+  });
+  $("#clear-filter").addEventListener("click", () => {
+    setFilter("all");
+    chips[0].focus({ preventScroll: true });
+  });
+}
+</script>
+</body>
+</html>
