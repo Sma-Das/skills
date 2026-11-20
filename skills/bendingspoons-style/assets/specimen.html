@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bending Spoons style specimen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fragment+Mono&family=Instrument+Sans:wght@400..700&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="bendingspoons.css">
+<style>
+  html, body { margin: 0; background: #000; }
+
+  /* Ring tiles: stand-ins for the product videos the source shows. */
+  .tile { display: grid; place-items: center; padding: 0.75rem; text-align: center; font: 600 clamp(1.25rem, 3.2vw, 2.9rem)/0.95 var(--font-sans); letter-spacing: -0.05em; }
+  .tile.is-serif { font: italic 400 clamp(1.6rem, 4vw, 3.6rem)/0.95 var(--font-serif); letter-spacing: -0.03em; }
+  .tile.is-mono { font: 400 clamp(0.8rem, 1.7vw, 1.5rem)/1.2 var(--font-mono); letter-spacing: 0; text-transform: uppercase; }
+  .tile.is-night { --tint: #141415; color: var(--accent); }
+  .tile.is-paper { --tint: #f6f6f6; }
+  .tile.is-indigo { --tint: var(--tint-indigo); color: #fff; }
+
+  /* Programme mock inside a tint card. */
+  .mock { margin: 0 clamp(1.5rem, 6vw, 4.5rem); padding: 1.25rem 1.25rem 0; border-radius: 1.5rem 1.5rem 0 0; background: #fff; color: #000; box-shadow: 0 -12px 40px rgb(0 0 0 / 0.08); display: grid; gap: 0.75rem; font: 500 0.875rem/1.3 var(--font-sans); letter-spacing: -0.02em; }
+  .mock.is-night { background: #141415; color: #fff; }
+  .mock header { display: flex; justify-content: space-between; align-items: center; font: 400 0.75rem/1.3 var(--font-mono); text-transform: uppercase; opacity: 0.7; }
+  .mock .show { display: grid; grid-template-columns: 3.25rem 1fr auto; gap: 0.875rem; align-items: center; padding: 0.625rem; border-radius: 1rem; background: color-mix(in srgb, currentColor 5%, transparent); }
+  .mock .show:last-child { border-radius: 1rem 1rem 0 0; padding-bottom: 1.5rem; }
+  .mock .poster { aspect-ratio: 3 / 4; border-radius: 0.5rem; background: var(--tint); }
+  .mock .show b { display: block; font-size: 1rem; font-weight: 600; }
+  .mock .show span { opacity: 0.7; }
+  .mock .time { padding: 0.375rem 0.75rem; border-radius: 999px; background: #000; color: #fff; font-weight: 600; white-space: nowrap; }
+  .mock.is-night .time { background: var(--accent); color: #000; }
+
+  /* Carousel slides: tinted panels where the source uses photographs. */
+  .frame { position: absolute; inset: 0; display: grid; align-content: start; justify-items: end; padding: 5% 6%; background: radial-gradient(120% 90% at 80% 10%, var(--a), var(--b) 70%); }
+  .frame span { font: italic 400 clamp(2.5rem, 9vw, 9rem)/0.9 var(--font-serif); letter-spacing: -0.03em; color: rgb(255 255 255 / 0.28); text-align: right; }
+
+  .honours { margin-bottom: clamp(3rem, 5.5vw, 5rem); }
+  .honour { display: grid; justify-items: center; gap: 2.5rem; padding: 2rem 0; }
+  .honour-art { width: min(17rem, 80%); aspect-ratio: 652 / 400; }
+  .bs-dark-card-art { aspect-ratio: 652 / 400; }
+  .voices { display: grid; gap: 0.75rem; width: 100%; padding: 2rem 0 0; font: 600 1rem/1.25 var(--font-sans); letter-spacing: -0.02em; }
+  .voices p { padding: 1rem; border-radius: 1rem; box-shadow: 0 4px 24px rgb(0 0 0 / 0.08); }
+  .voices p:nth-child(2) { margin-inline: 1rem; opacity: 0.7; }
+  .voices p:nth-child(3) { margin-inline: 2rem; opacity: 0.4; }
+  .footer-links { display: flex; flex-wrap: wrap; gap: 0.75rem 2rem; margin-bottom: 0.75rem; }
+</style>
+</head>
+<body>
+<div class="bs-page">
+
+  <nav class="bs-nav" data-theme="dark" aria-label="Main">
+    <div class="bs-nav-inner">
+      <a class="bs-logo" href="#top">Second Reel</a>
+      <div class="bs-nav-end">
+        <button class="bs-theme-toggle" type="button" aria-label="Switch to dark theme" data-theme-toggle>
+          <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="9" cy="9" r="6.25"/><path d="M9 2.75a6.25 6.25 0 0 0 0 12.5z" fill="currentColor"/></svg>
+        </button>
+        <a class="bs-nav-cta" href="#roles">See open roles</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top">
+    <section class="bs-band is-dark bs-hero" data-nav-theme="dark">
+      <h1 class="bs-display">Small-town cinemas,<br><em class="bs-em">relit</em> and <em class="bs-em">reopened</em></h1>
+      <div class="bs-ring" data-ring aria-hidden="true">
+        <div class="bs-ring-track">
+          <div class="bs-ring-card tile is-serif" style="--tint: var(--tint-yellow)">Orpheum</div>
+          <div class="bs-ring-card tile is-indigo">Rialto<br>Twin</div>
+          <div class="bs-ring-card tile is-night is-serif">The Lux</div>
+          <div class="bs-ring-card tile" style="--tint: var(--tint-orange)">astor</div>
+          <div class="bs-ring-card tile is-mono is-paper">Palace<br>est. 1931</div>
+          <div class="bs-ring-card tile is-serif" style="--tint: var(--tint-cyan)">Vista</div>
+          <div class="bs-ring-card tile" style="--tint: var(--tint-pink)">Roxy</div>
+          <div class="bs-ring-card tile is-night is-mono">Screen<br>on the Green</div>
+          <div class="bs-ring-card tile is-serif" style="--tint: var(--tint-lime)">Empire</div>
+          <div class="bs-ring-card tile" style="--tint: var(--tint-lavender)">Coronet</div>
+          <div class="bs-ring-card tile is-serif" style="--tint: var(--tint-olive)">Majestic</div>
+          <div class="bs-ring-card tile is-paper">Plaza</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bs-band is-dark" data-nav-theme="dark" aria-label="In numbers">
+      <div class="bs-wrap">
+        <p class="bs-stat bs-rise"><span class="bs-stat-num">41</span> screens<span class="bs-stat-desc">relit since 2016</span></p>
+        <p class="bs-stat bs-rise"><span class="bs-stat-num">2</span><span class="bs-stat-plus">+ </span>million<span class="bs-stat-desc">seats filled a year</span></p>
+        <p class="bs-stat bs-rise"><span class="bs-stat-num">310</span> people<span class="bs-stat-desc">trained to run a booth</span></p>
+      </div>
+    </section>
+
+    <section class="bs-band is-dark is-tall" data-nav-theme="dark">
+      <div class="bs-wrap">
+        <p class="bs-statement">We take on cinemas that have gone dark and fold them into <span class="bs-accent">one shared back office</span> for booking, repairs, and payroll.</p>
+        <p class="bs-statement">Then we hand each one back to <span class="bs-accent">a local crew</span>. Five people, their own programme, their own keys.</p>
+        <p class="bs-statement">We do not flip buildings. A house we reopen <span class="bs-accent">stays open</span>.</p>
+      </div>
+    </section>
+
+    <section class="bs-band" data-nav-theme="light" id="houses">
+      <div class="bs-wrap is-tight">
+        <div class="bs-head"><h2 class="bs-title">Houses</h2></div>
+        <div class="bs-grid-2">
+
+          <article class="bs-tint" style="--tint: var(--tint-cyan)">
+            <div class="bs-tint-body">
+              <div class="bs-tint-head">
+                <h3 class="bs-tint-name">Vista</h3>
+                <a class="bs-chip" href="#houses">See the programme <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 10 10 2M4 2h6v6"/></svg></a>
+              </div>
+              <ul class="bs-timeline">
+                <li class="is-date"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="5" y="6" width="12" height="11" rx="2"/><path d="M5 10h12M8.5 4.5v3M13.5 4.5v3"/></svg>Reopened March 2024</li>
+                <li>Rebuilt both booths and rewired the house lights</li>
+                <li>Added 180 seats by restoring the closed balcony</li>
+                <li>Runs a free matinee for schools every Thursday</li>
+              </ul>
+            </div>
+            <div class="bs-tint-media">
+              <div class="mock" style="--tint: var(--tint-cyan)">
+                <header><span>Tonight</span><span>Screen 1</span></header>
+                <div class="show"><i class="poster"></i><div><b>The Long Field</b><span>1 h 52 · subtitled</span></div><span class="time">18:30</span></div>
+                <div class="show"><i class="poster" style="--tint: var(--tint-orange)"></i><div><b>Harbour Lights</b><span>2 h 04 · 35 mm print</span></div><span class="time">21:00</span></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="bs-tint" style="--tint: var(--tint-lime)">
+            <div class="bs-tint-body">
+              <div class="bs-tint-head">
+                <h3 class="bs-tint-name">Empire</h3>
+                <a class="bs-chip" href="#houses">See the programme <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 10 10 2M4 2h6v6"/></svg></a>
+              </div>
+              <ul class="bs-timeline">
+                <li class="is-date"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="5" y="6" width="12" height="11" rx="2"/><path d="M5 10h12M8.5 4.5v3M13.5 4.5v3"/></svg>Reopened June 2022</li>
+                <li>Replaced a failed roof without closing for a single week</li>
+                <li>Tripled membership in its first two years</li>
+                <li>Hosts the county's only late-night repertory strand</li>
+              </ul>
+            </div>
+            <div class="bs-tint-media">
+              <div class="mock is-night" style="--tint: var(--tint-lime)">
+                <header><span>Members</span><span>This month</span></header>
+                <div class="show"><i class="poster"></i><div><b>1,284 active</b><span>96 joined in the last 30 days</span></div><span class="time">+8%</span></div>
+                <div class="show"><i class="poster" style="--tint: var(--tint-lavender)"></i><div><b>Repertory pass</b><span>Sold out for the season</span></div><span class="time">Full</span></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="bs-tint is-inverted" style="--tint: var(--tint-indigo)">
+            <div class="bs-tint-body">
+              <div class="bs-tint-head">
+                <h3 class="bs-tint-name">Rialto Twin</h3>
+                <a class="bs-chip" href="#houses">See the programme <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 10 10 2M4 2h6v6"/></svg></a>
+              </div>
+              <ul class="bs-timeline">
+                <li class="is-date"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="5" y="6" width="12" height="11" rx="2"/><path d="M5 10h12M8.5 4.5v3M13.5 4.5v3"/></svg>Reopened October 2023</li>
+                <li>Split one tired auditorium into two that sell out</li>
+                <li>Cut energy use by 40% with a new heat pump</li>
+                <li>Trains four apprentice projectionists a year</li>
+              </ul>
+            </div>
+            <div class="bs-tint-media">
+              <div class="mock" style="--tint: var(--tint-indigo)">
+                <header><span>Saturday</span><span>Screen 2</span></header>
+                <div class="show"><i class="poster"></i><div><b>Paper Moons</b><span>1 h 38 · family</span></div><span class="time">11:00</span></div>
+                <div class="show"><i class="poster" style="--tint: var(--tint-yellow)"></i><div><b>Night Ferry</b><span>1 h 47 · new release</span></div><span class="time">20:15</span></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="bs-tint" style="--tint: var(--tint-orange)">
+            <div class="bs-tint-body">
+              <div class="bs-tint-head">
+                <h3 class="bs-tint-name">Astor</h3>
+                <a class="bs-chip" href="#houses">See the programme <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 10 10 2M4 2h6v6"/></svg></a>
+              </div>
+              <ul class="bs-timeline">
+                <li class="is-date"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="5" y="6" width="12" height="11" rx="2"/><path d="M5 10h12M8.5 4.5v3M13.5 4.5v3"/></svg>Reopened January 2025</li>
+                <li>Dark for eleven years before the first screening</li>
+                <li>Restored the 1938 neon front from the original drawings</li>
+                <li>Broke even in month seven</li>
+              </ul>
+            </div>
+            <div class="bs-tint-media">
+              <div class="mock is-night" style="--tint: var(--tint-orange)">
+                <header><span>Box office</span><span>Week 31</span></header>
+                <div class="show"><i class="poster"></i><div><b>3,912 tickets</b><span>Best week since reopening</span></div><span class="time">+21%</span></div>
+                <div class="show"><i class="poster" style="--tint: var(--tint-pink)"></i><div><b>Sunday classics</b><span>Average house 88% full</span></div><span class="time">88%</span></div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+        <p class="bs-more">And 37 more</p>
+      </div>
+    </section>
+
+    <section class="bs-band is-raised" data-nav-theme="dark">
+      <div class="bs-wrap is-tight">
+        <div class="bs-head"><h2 class="bs-title">The back office</h2></div>
+        <div class="bs-grid-2 is-snug">
+          <article class="bs-dark-card">
+            <div class="bs-dark-card-text">
+              <h3 class="bs-serif-title">Reelhouse</h3>
+              <h4>Print and file booking</h4>
+              <p>Reelhouse books every title for every screen, tracks each print and drive in transit, and flags a clash before it reaches a poster.</p>
+            </div>
+            <div class="bs-dark-card-art" data-iso="stack"></div>
+          </article>
+          <article class="bs-dark-card">
+            <div class="bs-dark-card-text">
+              <h3 class="bs-serif-title">Usher</h3>
+              <h4>Ticketing and seating</h4>
+              <p>Usher sells seats online and at the door from one map, holds rows for members, and settles with distributors overnight.</p>
+            </div>
+            <div class="bs-dark-card-art" data-iso="seats"></div>
+          </article>
+          <article class="bs-dark-card">
+            <div class="bs-dark-card-text">
+              <h3 class="bs-serif-title">Gaffer</h3>
+              <h4>Repairs and spares</h4>
+              <p>Gaffer logs every fault in every booth, keeps a shared shelf of lamps and belts, and sends the nearest engineer.</p>
+            </div>
+            <div class="bs-dark-card-art" data-iso="orbit"></div>
+          </article>
+          <article class="bs-dark-card">
+            <div class="bs-dark-card-text">
+              <h3 class="bs-serif-title">Foyer</h3>
+              <h4>Membership</h4>
+              <p>Foyer runs passes that work in any house, remembers what a member has seen, and writes the monthly letter.</p>
+            </div>
+            <div class="bs-dark-card-art" data-iso="dome"></div>
+          </article>
+        </div>
+        <p class="bs-more">And a few more</p>
+      </div>
+    </section>
+
+    <section class="bs-band is-soft" data-nav-theme="light">
+      <div class="bs-wrap">
+        <div class="bs-head"><h2 class="bs-title"><em class="bs-em">Open</em> nights</h2></div>
+        <p class="bs-rows-label">Coming up</p>
+        <ul class="bs-rows">
+          <li class="bs-row">
+            <div>
+              <h3><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="16" r="6"/><circle cx="21" cy="16" r="6"/></svg>Booth school</h3>
+              <p class="bs-muted">A weekend learning to thread, focus, and change over.</p>
+            </div>
+            <div class="bs-row-meta">
+              <p><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M9 16s5-4.6 5-8.5a5 5 0 0 0-10 0C4 11.4 9 16 9 16z"/><circle cx="9" cy="7.5" r="1.6"/></svg>Vista, upstairs booth</p>
+              <p class="bs-small"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3" y="4.5" width="12" height="10.5" rx="2"/><path d="M3 8h12M6.5 3v3M11.5 3v3"/></svg><time datetime="2027-03-13">March 13 to 14, 2027</time></p>
+            </div>
+            <div class="bs-row-action"><a class="bs-btn is-compact" href="#houses">Book a place</a><p>Twelve places</p></div>
+          </li>
+          <li class="bs-row">
+            <div>
+              <h3><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 24 16 8l10 16z"/></svg>Neon night</h3>
+              <p class="bs-muted">The Astor front goes back on. Bring a coat.</p>
+            </div>
+            <div class="bs-row-meta">
+              <p><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M9 16s5-4.6 5-8.5a5 5 0 0 0-10 0C4 11.4 9 16 9 16z"/><circle cx="9" cy="7.5" r="1.6"/></svg>Astor, the pavement</p>
+              <p class="bs-small"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3" y="4.5" width="12" height="10.5" rx="2"/><path d="M3 8h12M6.5 3v3M11.5 3v3"/></svg><time datetime="2027-04-02">April 2, 2027</time></p>
+            </div>
+            <div class="bs-row-action"><a class="bs-btn is-compact" href="#houses">Book a place</a><p>Free, no ticket</p></div>
+          </li>
+          <li class="bs-row">
+            <div>
+              <h3><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="7" y="7" width="18" height="18" rx="4"/></svg>Programmers' table</h3>
+              <p class="bs-muted">Five crews argue about next season in public.</p>
+            </div>
+            <div class="bs-row-meta">
+              <p><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M9 16s5-4.6 5-8.5a5 5 0 0 0-10 0C4 11.4 9 16 9 16z"/><circle cx="9" cy="7.5" r="1.6"/></svg>Empire, the bar</p>
+              <p class="bs-small"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3" y="4.5" width="12" height="10.5" rx="2"/><path d="M3 8h12M6.5 3v3M11.5 3v3"/></svg><time datetime="2027-05-21">May 21, 2027</time></p>
+            </div>
+            <div class="bs-row-action"><a class="bs-btn is-compact is-ghost" href="#houses">Tell me when</a><p>Booking opens in April</p></div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="bs-band is-dark bs-carousel" data-nav-theme="dark" aria-label="Talks">
+      <h2 class="bs-title">Talks</h2>
+      <ul class="bs-carousel-track" tabindex="0" aria-label="Talks, scroll sideways">
+        <li class="bs-slide"><div class="frame" style="--a: #6b7a52; --b: #10140c"><span>Booth<br>notes</span></div><h3 class="bs-slide-caption">Booth notes with Ines Varga</h3><div class="bs-slide-action"><a class="bs-glass" href="#top"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>Watch</a></div></li>
+        <li class="bs-slide"><div class="frame" style="--a: #5867ed; --b: #0b0d24"><span>After<br>hours</span></div><h3 class="bs-slide-caption">After hours: the Rialto split</h3><div class="bs-slide-action"><a class="bs-glass" href="#top"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>Watch</a></div></li>
+        <li class="bs-slide"><div class="frame" style="--a: #b0623b; --b: #1c0d06"><span>Neon</span></div><h3 class="bs-slide-caption">Rebuilding a 1938 neon front</h3><div class="bs-slide-action"><a class="bs-glass" href="#top"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>Watch</a></div></li>
+        <li class="bs-slide"><div class="frame" style="--a: #2f8fa3; --b: #06181c"><span>Full<br>house</span></div><h3 class="bs-slide-caption">What fills a Tuesday</h3><div class="bs-slide-action"><a class="bs-glass" href="#top"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>Watch</a></div></li>
+        <li class="bs-slide"><div class="frame" style="--a: #8b5a86; --b: #170c16"><span>First<br>reel</span></div><h3 class="bs-slide-caption">First reel: an apprentice's year</h3><div class="bs-slide-action"><a class="bs-glass" href="#top"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>Watch</a></div></li>
+      </ul>
+      <div class="bs-carousel-nav">
+        <button class="bs-round" type="button" aria-label="Previous talk" data-prev><svg viewBox="0 0 17 13" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 6.5H2M7 1 1.5 6.5 7 12"/></svg></button>
+        <button class="bs-round" type="button" aria-label="Next talk" data-next><svg viewBox="0 0 17 13" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M0 6.5h15M10 1l5.5 5.5L10 12"/></svg></button>
+      </div>
+    </section>
+
+    <section class="bs-band is-accent" data-nav-theme="accent" id="roles">
+      <div class="bs-wrap bs-stack">
+        <div class="bs-grid-3 honours">
+          <div class="honour">
+            <div class="honour-art" data-iso="beacon" data-iso-theme="lime"></div>
+            <p class="bs-caption">Heritage Trust restoration prize</p>
+          </div>
+          <div class="bs-feature">
+            <p class="bs-feature-num">4.8<sup>/5</sup></p>
+            <p class="bs-label">Audience rating</p>
+            <div class="voices">
+              <p>&ldquo;The best seat in town is back.&rdquo;</p>
+              <p>&ldquo;I saw my first film here. So did my son.&rdquo;</p>
+              <p>&ldquo;Worth the drive.&rdquo;</p>
+            </div>
+          </div>
+          <div class="honour">
+            <div class="honour-art" data-iso="database" data-iso-theme="lime"></div>
+            <p class="bs-caption">Independent Exhibitor of the Year</p>
+          </div>
+        </div>
+        <a class="bs-btn" href="#roles">See open roles</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bs-footer" data-nav-theme="dark">
+    <div class="bs-footer-cols">
+      <div>
+        <p class="bs-label">Company</p>
+        <a href="#top" aria-current="page">About us</a>
+        <a href="#houses">Houses</a>
+        <a href="#roles">Roles</a>
+        <a href="#top">Open nights</a>
+        <a href="#top">Press</a>
+        <a href="isometric.html">Illustration gallery</a>
+      </div>
+      <div>
+        <p class="bs-label">Follow</p>
+        <a href="#top">Newsletter</a>
+        <a href="#top">Letterboxd</a>
+        <a href="#top">Instagram</a>
+      </div>
+      <div>
+        <p class="bs-label">Bring us a building</p>
+        <a href="#top">buildings@secondreel.example</a>
+        <p class="bs-label" style="margin-top: 2rem">Press</p>
+        <a href="#top">press@secondreel.example</a>
+      </div>
+      <div class="is-wide">
+        <p class="bs-legal">Second Reel is a made-up cinema group used to show this design language. Nothing on this page is a real venue, event, or offer, and none of it is connected with Bending Spoons.</p>
+        <div class="footer-links"><a href="#top">Privacy</a><a href="#top">Accessibility</a></div>
+        <p class="bs-label">Head office</p>
+        <p class="bs-body">12 Projector Lane, Upper Mill</p>
+      </div>
+    </div>
+    <div class="bs-footer-mark">
+      <div class="bs-wordmark" aria-hidden="true">
+        <svg viewBox="0 0 1000 182"><text x="-8" y="160" textLength="1012" lengthAdjust="spacingAndGlyphs">Second Reel</text></svg>
+      </div>
+      <p class="bs-tagline">Lights down. <em class="bs-em">Always.</em></p>
+    </div>
+  </footer>
+</div>
+
+<script type="module">
+  import { ring } from "./js/ring.js";
+  import { blurReveal, rise, slideIn } from "./js/reveal.js";
+  import { navTheme } from "./js/nav-theme.js";
+  import { carousel } from "./js/carousel.js";
+  import { mount } from "./js/iso.js";
+  import { scenes } from "./js/iso-scenes.js";
+
+  const root = document.documentElement;
+  const params = new URLSearchParams(location.search);
+  if (params.get("theme")) root.dataset.theme = params.get("theme");
+  if (params.get("fidelity")) root.dataset.fidelity = params.get("fidelity");
+
+  for (const el of document.querySelectorAll("[data-iso]")) mount(el, { ...scenes[el.dataset.iso], theme: el.dataset.isoTheme ?? "dark" });
+  for (const el of document.querySelectorAll("[data-ring]")) ring(el);
+  for (const el of document.querySelectorAll(".bs-statement")) blurReveal(el);
+  for (const el of document.querySelectorAll(".bs-rise")) rise(el);
+  for (const el of document.querySelectorAll(".bs-carousel")) carousel(el);
+  slideIn(document.querySelector(".bs-wordmark"), document.querySelector(".bs-footer"));
+  navTheme(document.querySelector(".bs-nav"));
+
+  const toggle = document.querySelector("[data-theme-toggle]");
+  const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  const sync = () => toggle.setAttribute("aria-label", isDark() ? "Switch to light theme" : "Switch to dark theme");
+  toggle.addEventListener("click", () => { root.dataset.theme = isDark() ? "light" : "dark"; sync(); });
+  sync();
+</script>
+</body>
+</html>

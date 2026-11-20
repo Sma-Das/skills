@@ -20,6 +20,8 @@ jobs:
         run: |
           node --test skills/morphing-icons/assets/js/icons.test.mjs
           node skills/morphing-icons/scripts/audit.mjs --strict
+      - name: Test isometric projection and depth sorting
+        run: node --test skills/bendingspoons-style/assets/js/iso.test.mjs
       - name: Check every palette
         run: node skills/hairline-ui/scripts/palette.mjs --all
   scaffold:

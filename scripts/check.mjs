@@ -4,7 +4,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const skills = ["hairline-ui", "hairline-stack", "hairline-charts", "hairline-motion", "interface-polish", "xyne-style", "morphing-icons", "little-touches"];
+const skills = ["hairline-ui", "hairline-stack", "hairline-charts", "hairline-motion", "interface-polish", "xyne-style", "bendingspoons-style", "morphing-icons", "little-touches"];
 for (const name of skills) {
   const folder = resolve(root, "skills", name);
   const text = readFileSync(resolve(folder, "SKILL.md"), "utf8");

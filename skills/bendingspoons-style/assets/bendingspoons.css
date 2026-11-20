@@ -1,0 +1,838 @@
+/*
+  Bending Spoons style: full-bleed black, white, and lime bands, a tight grotesque
+  with serif-italic emphasis, very round pastel cards, and blur-in motion.
+
+  Import once, then compose with the .bs-* classes. Every value is a token. Swap
+  --accent to re-colour, and set --tint per card.
+  Fonts: Instrument Sans (text and display), Instrument Serif (emphasis, numerals,
+  card titles), Fragment Mono (labels). All three are free on Google Fonts.
+*/
+
+:root {
+  color-scheme: light;
+
+  /* Colour: light bands */
+  --bg: #ffffff;                       /* light band */
+  --surface: #f6f6f6;                  /* soft band behind white rows and tiles */
+  --card: #ffffff;                     /* rows, tiles, and document cards */
+  --ink: #000000;
+  --ink-soft: rgb(0 0 0 / 0.75);       /* "and many more" captions */
+  --muted: rgb(0 0 0 / 0.6);           /* row descriptions */
+  --border: #d4d4d4;                   /* ghost buttons, inputs */
+  --em: #000000;                       /* serif-italic emphasis on light bands */
+  --focus: #000000;
+
+  /* Colour: dark bands (the same in both themes) */
+  --night: #000000;                    /* hero, stats, statement, carousel, footer */
+  --night-raised: #252525;             /* band that holds black cards */
+  --off-black: #141415;                /* compact buttons */
+  --night-ink: #ffffff;
+  --night-soft: rgb(255 255 255 / 0.65);
+  --night-muted: rgb(255 255 255 / 0.5);   /* card body copy, 5.32:1 on black */
+  --night-label: rgb(255 255 255 / 0.6);   /* footer labels and legal; source 0.4 fails AA */
+  --night-line: rgb(255 255 255 / 0.05);   /* nav and footer hairlines */
+  --night-outline: rgb(255 255 255 / 0.3); /* round buttons */
+
+  /* Colour: accent */
+  --accent: #c7ff9f;                   /* lime: emphasis on dark, the accent band, hover fills */
+  --on-accent: #000000;
+
+  /* Colour: pastel tints for product cards. Set --tint on each card. */
+  --tint-cyan: #72e5ff;
+  --tint-lime: #d3efab;
+  --tint-blush: #ffe3e3;
+  --tint-orange: #ffa575;
+  --tint-lavender: #efe9fe;
+  --tint-olive: #e2e2a0;
+  --tint-yellow: #ffcb00;
+  --tint-sky: #c1d6f9;
+  --tint-pink: #ffc9ee;
+  --tint-indigo: #5867ed;              /* the one dark tint: add .is-inverted */
+  --tint-soft-alpha: 0.64;             /* bullet copy on a tint; source 0.5 fails AA */
+  --tint-soft-alpha-inverted: 1;       /* white bullets on the dark tint; source 0.5 is 2.3:1 */
+
+  /* Nav over a light band */
+  --nav-ink-light: #000000;
+  --nav-tint-light: rgb(255 255 255 / 0.1);
+  --nav-line-light: rgb(255 255 255 / 0.2);
+
+  /* Type */
+  --font-sans: "Instrument Sans", "Inter", system-ui, sans-serif;
+  --font-serif: "Instrument Serif", "Times New Roman", serif;
+  --font-mono: "Fragment Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --fs-display: clamp(2.8125rem, 6.944vw, 6.25rem);    /* 45px to 100px */
+  --fs-title: clamp(2.25rem, 4.653vw, 4.1875rem);      /* 36px to 67px */
+  --fs-statement: clamp(2rem, 4.444vw, 4rem);          /* 32px to 64px */
+  --fs-stat: clamp(3.125rem, 8.68vw, 7.8125rem);       /* 50px to 125px */
+  --fs-stat-num: clamp(4.1875rem, 12.85vw, 11.5625rem);/* 67px to 185px */
+  --fs-lede: clamp(1.25rem, 1.6vw, 1.4375rem);         /* 20px to 23px */
+
+  /* Layout */
+  --wrap: 90rem;                       /* 1440px */
+  --gutter: 1.5rem;                    /* 24px; 64px from 48rem */
+  --gutter-tight: 1.5rem;              /* 24px; 48px from 48rem: nav, card grids, footer */
+  --section-y: 5rem;                   /* 80px; 120px from 48rem */
+  --section-y-tall: 5rem;              /* 80px; 200px from 48rem: statements */
+  --nav-h: 4rem;                       /* 64px; 80px from 48rem */
+
+  /* Shape */
+  --r-pill: 999px;
+  --r-ring: 1rem;                      /* ring cards; 32px from 48rem */
+  --r-row: 1.5rem;                     /* 24px: list rows, icon blocks */
+  --r-card: 2.25rem;                   /* 36px; 40px from 48rem */
+  --r-tint: 2.25rem;                   /* 36px; 50px from 64rem */
+  --r-slide: 1.25rem;                  /* 20px; 40px from 48rem */
+  --r-feature: 1.875rem;               /* 30px; 60px from 48rem: the white card on the accent band */
+
+  /* Depth */
+  --shadow-row: 0 10px 24px rgb(0 0 0 / 0.05);
+  --shadow-doc: 0 12px 57px rgb(30 19 67 / 0.1);
+  --shadow-media: 0 19px 44px rgb(0 0 0 / 0.17);
+
+  /* Motion */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.33, 1, 0.68, 1);          /* GSAP power2.out */
+  --ease-in: cubic-bezier(0.32, 0, 0.67, 0);           /* GSAP power2.in */
+  --ease-back: cubic-bezier(0.34, 1.4, 0.64, 1);       /* close to GSAP back.out(1.3) */
+  --dur-fast: 150ms;
+  --dur: 300ms;
+  --dur-slow: 1s;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --gutter: 4rem; --gutter-tight: 3rem;
+    --section-y: 7.5rem; --section-y-tall: 12.5rem;
+    --nav-h: 5rem;
+    --r-ring: 2rem; --r-card: 2.5rem; --r-slide: 2.5rem; --r-feature: 3.75rem;
+  }
+}
+@media (min-width: 64rem) { :root { --r-tint: 3.125rem; } }
+
+/* Dark appearance. The source has none. Light bands turn off-black, the black
+   and lime bands stay as they are, and emphasis turns lime everywhere. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #141415;
+  --surface: #1c1c1d;
+  --card: #252525;
+  --ink: #ffffff;
+  --ink-soft: rgb(255 255 255 / 0.75);
+  --muted: rgb(255 255 255 / 0.6);
+  --border: rgb(255 255 255 / 0.2);
+  --em: #c7ff9f;
+  --focus: #c7ff9f;
+  --off-black: #ffffff;
+  --nav-ink-light: #ffffff;
+  --nav-tint-light: rgb(0 0 0 / 0.1);
+  --nav-line-light: rgb(255 255 255 / 0.05);
+  --shadow-row: 0 10px 24px rgb(0 0 0 / 0.3);
+  --shadow-doc: 0 12px 57px rgb(0 0 0 / 0.35);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #141415;
+    --surface: #1c1c1d;
+    --card: #252525;
+    --ink: #ffffff;
+    --ink-soft: rgb(255 255 255 / 0.75);
+    --muted: rgb(255 255 255 / 0.6);
+    --border: rgb(255 255 255 / 0.2);
+    --em: #c7ff9f;
+    --focus: #c7ff9f;
+    --off-black: #ffffff;
+    --nav-ink-light: #ffffff;
+    --nav-tint-light: rgb(0 0 0 / 0.1);
+    --nav-line-light: rgb(255 255 255 / 0.05);
+    --shadow-row: 0 10px 24px rgb(0 0 0 / 0.3);
+    --shadow-doc: 0 12px 57px rgb(0 0 0 / 0.35);
+  }
+}
+
+/* Exact fidelity: the source's faint values, accepting AA failures on small
+   text. Opt in per page with <html data-fidelity="exact">. */
+:root[data-fidelity="exact"] {
+  --tint-soft-alpha: 0.5;
+  --tint-soft-alpha-inverted: 0.5;
+  --night-label: rgb(255 255 255 / 0.4);
+}
+
+/* ------------------------------------------------------------------ base */
+
+.bs-page {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--night);
+  font: 400 1rem/1.5 var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.bs-page *, .bs-page *::before, .bs-page *::after { box-sizing: border-box; }
+.bs-page :where(h1, h2, h3, h4, h5, p, ul, ol, figure) { margin: 0; }
+.bs-page :where(a) { color: inherit; text-decoration: none; }
+.bs-page :where(img, svg, video) { display: block; max-width: 100%; }
+.bs-page :focus-visible { outline: 2px solid var(--b-focus, var(--focus)); outline-offset: 3px; }
+.bs-page ::selection { background: var(--accent); color: var(--on-accent); }
+
+/* ------------------------------------------------------------------ bands */
+
+/* A band is a full-bleed section. It sets the local colours (--b-*) that every
+   component inside reads, so the same card works on any band. */
+.bs-page, .bs-band {
+  --b-bg: var(--bg);
+  --b-ink: var(--ink);
+  --b-soft: var(--ink-soft);
+  --b-muted: var(--muted);
+  --b-line: var(--border);
+  --b-em: var(--em);
+  --b-card: var(--card);
+  --b-focus: var(--focus);
+  --b-btn: var(--ink);
+  --b-on-btn: var(--bg);
+}
+.bs-band {
+  position: relative;
+  padding-block: var(--section-y);
+  background: var(--b-bg);
+  color: var(--b-ink);
+}
+.bs-band.is-tall { padding-block: var(--section-y-tall); }
+.bs-band.is-soft { --b-bg: var(--surface); }
+.bs-band.is-dark, .bs-band.is-raised, .bs-footer {
+  --b-bg: var(--night);
+  --b-ink: var(--night-ink);
+  --b-soft: var(--night-soft);
+  --b-muted: var(--night-muted);
+  --b-line: var(--night-outline);
+  --b-em: var(--accent);
+  --b-card: var(--night-raised);
+  --b-focus: var(--accent);
+  --b-btn: #ffffff;
+  --b-on-btn: #000000;
+}
+.bs-band.is-raised { --b-bg: var(--night-raised); --b-card: var(--night); }
+.bs-band.is-accent {
+  --b-bg: var(--accent);
+  --b-ink: var(--on-accent);
+  --b-soft: rgb(0 0 0 / 0.75);
+  --b-muted: rgb(0 0 0 / 0.7);
+  --b-line: rgb(0 0 0 / 0.3);
+  --b-em: var(--on-accent);
+  --b-card: #ffffff;
+  --b-focus: #000000;
+  --b-btn: #000000;
+  --b-on-btn: #ffffff;
+}
+
+.bs-wrap { width: 100%; max-width: var(--wrap); margin-inline: auto; padding-inline: var(--gutter); }
+.bs-wrap.is-tight { padding-inline: var(--gutter-tight); }
+.bs-center { text-align: center; }
+.bs-stack { display: grid; gap: 1.5rem; justify-items: center; }
+
+/* ------------------------------------------------------------------ type */
+
+.bs-display {
+  font: 400 var(--fs-display)/1 var(--font-sans);
+  letter-spacing: -0.03em;
+  text-align: center;
+  text-wrap: balance;
+}
+@media (min-width: 48rem) { .bs-display { letter-spacing: -0.06em; } }
+.bs-title {
+  font: 400 var(--fs-title)/1.12 var(--font-sans);
+  letter-spacing: -0.01em;
+  text-align: center;
+  text-wrap: balance;
+}
+@media (min-width: 48rem) { .bs-title { line-height: 0.93; letter-spacing: -0.04em; } }
+
+/* Serif-italic emphasis: one or two words in a display line. Lime on dark bands,
+   ink on light and accent bands. */
+.bs-em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  color: var(--b-em);
+}
+
+.bs-statement {
+  font: 400 var(--fs-statement)/1.2 var(--font-sans);
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
+}
+.bs-statement + .bs-statement { margin-top: clamp(3.5rem, 7vw, 6.25rem); }
+.bs-accent { color: var(--b-em); }
+
+.bs-lede { font: 400 var(--fs-lede)/1.4 var(--font-sans); letter-spacing: -0.02em; text-wrap: pretty; }
+.bs-body { font: 400 1.0625rem/1.3 var(--font-sans); letter-spacing: -0.02em; }
+.bs-small { font: 500 0.9375rem/1.3 var(--font-sans); letter-spacing: -0.02em; }
+.bs-muted { color: var(--b-muted); }
+.bs-label {
+  font: 400 0.875rem/1.3 var(--font-mono);
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+.bs-link { text-decoration: underline; text-underline-offset: 2px; }
+@media (hover: hover) { .bs-link:hover { text-underline-offset: 6px; } }
+
+/* Section heading block: a title, then an optional lede 32px below. */
+.bs-head { display: grid; justify-items: center; gap: 2rem; margin-bottom: clamp(1.25rem, 4.4vw, 4rem); text-align: center; }
+.bs-head .bs-lede { max-width: 40rem; }
+
+/* Pull quote: an oversized mark at 20% above a statement. */
+.bs-quote::before {
+  content: "\201C";
+  display: block;
+  font-size: clamp(4rem, 9.7vw, 8.75rem);
+  line-height: 0;
+  margin: 0.45em 0 0.1em;
+  opacity: 0.2;
+}
+
+/* ------------------------------------------------------------------ nav */
+
+/* Fixed, 10% tint with a 16px backdrop blur. nav-theme.js sets data-theme to
+   "dark", "light", or "accent" to match the band under it. */
+.bs-nav {
+  --nav-ink: #ffffff;
+  --nav-on-ink: #000000;
+  --nav-tint: rgb(0 0 0 / 0.1);
+  --nav-line: var(--night-line);
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  background: var(--nav-tint);
+  border-bottom: 1px solid var(--nav-line);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  color: var(--nav-ink);
+  transition: color var(--dur) var(--ease), background-color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.bs-nav[data-theme="light"] {
+  --nav-ink: var(--nav-ink-light);
+  --nav-on-ink: var(--bg);
+  --nav-tint: var(--nav-tint-light);
+  --nav-line: var(--nav-line-light);
+}
+.bs-nav[data-theme="accent"] {
+  --nav-ink: #000000;
+  --nav-on-ink: #ffffff;
+  --nav-tint: rgb(255 255 255 / 0.1);
+  --nav-line: rgb(255 255 255 / 0.2);
+}
+.bs-nav :focus-visible { outline-color: var(--nav-ink); }
+.bs-nav-inner {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  height: var(--nav-h);
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-inline: var(--gutter-tight);
+}
+.bs-logo {
+  font: 500 1.375rem/1 var(--font-sans);
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+}
+@media (min-width: 48rem) { .bs-logo { font-size: 1.75rem; } }
+.bs-nav-end { display: flex; align-items: center; gap: 0.75rem; }
+.bs-nav-links { display: none; gap: 2.5rem; font: 600 1rem/1.3 var(--font-sans); letter-spacing: -0.02em; }
+.bs-nav-links a { opacity: 0.8; text-underline-offset: 8px; }
+.bs-nav-links a[aria-current] { opacity: 1; text-decoration: underline; }
+@media (hover: hover) { .bs-nav-links a:hover { opacity: 1; } }
+@media (min-width: 48rem) { .bs-nav-links { display: flex; } }
+
+/* The single nav action: a filled pill that inverts on hover. */
+.bs-nav-cta {
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--nav-ink);
+  border-radius: var(--r-pill);
+  background: var(--nav-ink);
+  color: var(--nav-on-ink);
+  font: 600 0.875rem/1.3 var(--font-sans);
+  letter-spacing: 0.025em;
+  white-space: nowrap;
+  transition: color var(--dur) var(--ease), background-color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+@media (min-width: 48rem) { .bs-nav-cta { padding: 0.625rem 1.125rem; font-size: 1rem; } }
+@media (hover: hover) { .bs-nav-cta:hover { background: var(--nav-on-ink); color: var(--nav-ink); } }
+
+.bs-theme-toggle {
+  display: grid; place-items: center;
+  width: 2.5rem; height: 2.5rem;
+  padding: 0; border: 0; border-radius: var(--r-pill);
+  background: transparent; color: inherit;
+  cursor: pointer;
+}
+.bs-theme-toggle svg { width: 1.125rem; height: 1.125rem; }
+
+/* ------------------------------------------------------------------ buttons */
+
+/* Main action: a filled pill with a 2px border. The fill turns lime on hover. */
+.bs-btn {
+  display: inline-block;
+  padding: 1rem 1.75rem;
+  border: 2px solid var(--b-btn);
+  border-radius: var(--r-pill);
+  background: var(--b-btn);
+  color: var(--b-on-btn);
+  font: 500 1.25rem/1.3 var(--font-sans);
+  letter-spacing: -0.02em;
+  text-align: center;
+  cursor: pointer;
+  transition: color 200ms var(--ease), background-color 200ms var(--ease), border-color 200ms var(--ease);
+}
+@media (hover: hover) { .bs-btn:hover { background: var(--accent); color: var(--on-accent); } }
+/* Compact: list rows and forms. */
+.bs-btn.is-compact { padding: 0.75rem 1.5rem; border-width: 1px; border-radius: 1.875rem; }
+/* Ghost: the secondary action beside or instead of a compact button. */
+.bs-btn.is-ghost { background: transparent; border-color: var(--b-line); color: var(--b-muted); }
+@media (hover: hover) { .bs-btn.is-ghost:hover { background: transparent; border-color: var(--b-ink); color: var(--b-ink); } }
+
+/* Chip: the small link in a card header, with an arrow. */
+.bs-chip {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  flex: none;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, currentColor 5%, transparent);
+  font: 500 1rem/1.3 var(--font-sans);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+.bs-chip svg { width: 0.75rem; height: 0.75rem; flex: none; }
+@media (hover: hover) { .bs-chip:hover { border-color: color-mix(in srgb, currentColor 80%, transparent); } }
+
+/* Glass pill: sits on an image. It grows by 4px and 2px on hover. */
+.bs-glass {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--r-pill);
+  background: rgb(0 0 0 / 0.3);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  font: 600 0.875rem/1.66 var(--font-sans);
+  letter-spacing: -0.02em;
+  transition: padding var(--dur-fast) var(--ease);
+}
+.bs-glass svg { width: 1.5rem; height: 1.5rem; }
+@media (min-width: 48rem) { .bs-glass { font-size: 1.5rem; } }
+@media (hover: hover) { .bs-glass:hover { padding: 0.875rem 1.5rem; } }
+.bs-glass:focus-visible { outline-color: #ffffff; }
+
+/* Round arrow button: carousel controls. */
+.bs-round {
+  display: grid; place-items: center;
+  width: 3.5rem; height: 3.5rem;
+  padding: 0;
+  border: 1px solid var(--b-line);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--b-ink);
+  cursor: pointer;
+  transition: scale var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.bs-round svg { width: 1.0625rem; height: 0.8125rem; }
+.bs-round:disabled { opacity: 0.35; cursor: default; }
+@media (hover: hover) { .bs-round:not(:disabled):hover { scale: 0.95; border-color: var(--b-ink); } }
+
+/* ------------------------------------------------------------------ hero */
+
+/* One viewport tall: a centred display line above a slowly turning card ring. */
+.bs-hero {
+  display: flex; flex-direction: column; justify-content: space-around;
+  min-height: 100svh;
+  padding-block: calc(var(--nav-h) + 2.5rem) 0;
+  overflow: clip;
+}
+.bs-hero .bs-display { padding-inline: 1rem; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .bs-hero .bs-display { animation: bs-rise var(--dur-slow) var(--ease-out) both; }
+  .bs-ring { animation: bs-ring-in var(--dur-slow) var(--ease-out) 0.5s both; }
+}
+@keyframes bs-rise { from { opacity: 0; transform: translateY(50px); } }
+@keyframes bs-ring-in { from { opacity: 0; transform: translateY(150px); filter: blur(3px) grayscale(1); } }
+
+/* Card ring. Without ring.js the cards sit in a centred row. ring.js adds
+   .is-ready and places them on a cylinder seen from outside, facing in. */
+.bs-ring {
+  display: flex; justify-content: center;
+  padding-block: clamp(3rem, 8.3vw, 7.5rem);
+  perspective: 1000px;
+  overflow-x: clip;
+}
+.bs-ring-track {
+  position: relative;
+  display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+}
+.bs-ring-card {
+  flex: none;
+  width: clamp(7.5rem, 15vw, 13.5rem);
+  aspect-ratio: 3 / 4;
+  border-radius: var(--r-ring);
+  overflow: hidden;
+  background: var(--tint, var(--night-raised));
+  color: #000000;
+}
+.bs-ring-card > :where(img, video) { width: 100%; height: 100%; object-fit: cover; }
+/* With ring.js: the track is one card wide, and the cards stack on it in 3D. */
+.bs-ring.is-ready .bs-ring-track {
+  width: 50%;
+  aspect-ratio: 6 / 5;
+  gap: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+@media (min-width: 48rem) { .bs-ring.is-ready .bs-ring-track { width: 25%; } }
+.bs-ring.is-ready .bs-ring-card { position: absolute; width: 100%; backface-visibility: hidden; }
+
+/* ------------------------------------------------------------------ stats */
+
+/* One figure per row: a serif numeral in lime, a grotesque unit, a caption. */
+.bs-stat {
+  padding-block: 2.5rem;
+  font: 400 var(--fs-stat)/0.93 var(--font-sans);
+  letter-spacing: -0.06em;
+  text-align: center;
+}
+.bs-stat-num, .bs-stat-plus {
+  font-family: var(--font-serif);
+  letter-spacing: -0.02em;
+  color: var(--b-em);
+}
+.bs-stat-num { font-size: var(--fs-stat-num); }
+.bs-stat-plus { font-size: calc(var(--fs-stat-num) * 0.784); vertical-align: bottom; }
+.bs-stat-desc {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+  line-height: 1.41;
+  letter-spacing: -0.03em;
+}
+
+/* Small stat: serif figure, sans caption, used in rows of two or three. */
+.bs-figure { display: grid; justify-items: center; gap: 0.5rem; text-align: center; }
+.bs-figure b { font: 400 2.8125rem/1.03 var(--font-serif); letter-spacing: -0.03em; }
+
+/* reveal.js adds .is-armed, then .is-in when the block enters the viewport. */
+.bs-rise.is-armed { opacity: 0; transform: translateY(100px); }
+.bs-rise.is-armed.is-in {
+  opacity: 1; transform: none;
+  transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-back);
+}
+
+/* reveal.js splits a paragraph into these. Words never break mid-word. */
+.bs-word { display: inline-block; white-space: nowrap; }
+.bs-char { display: inline-block; will-change: opacity, filter; }
+
+/* ------------------------------------------------------------------ grids */
+
+.bs-grid-2 { display: grid; gap: 1.5rem; }
+@media (min-width: 64rem) { .bs-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3rem; } }
+.bs-grid-2.is-close { gap: 1.5rem; }
+@media (min-width: 64rem) { .bs-grid-2.is-snug { gap: 2.5rem; } }
+.bs-grid-3 { display: grid; gap: 1.5rem; align-items: center; }
+@media (min-width: 48rem) { .bs-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* "And many more": a caption between two 56px hairlines that fade outward. */
+.bs-more {
+  display: flex; align-items: center; justify-content: center; gap: 2rem;
+  margin-top: var(--section-y);
+  color: var(--b-soft);
+  font: 500 1.375rem/1.36 var(--font-sans);
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+.bs-more::before, .bs-more::after {
+  content: "";
+  flex: none;
+  width: 3.5rem; height: 2px; margin-top: 4px;
+  border-radius: var(--r-pill);
+  background: linear-gradient(to right, transparent, color-mix(in srgb, currentColor 27%, transparent));
+}
+.bs-more::after { background: linear-gradient(to left, transparent, color-mix(in srgb, currentColor 27%, transparent)); }
+
+/* ------------------------------------------------------------------ tint card */
+
+/* A pastel card for one product or project. Set --tint. The glow under the
+   card is the same colour. Text is always black, or white with .is-inverted. */
+.bs-tint {
+  --tint: var(--tint-cyan);
+  --tint-ink: #000000;
+  --tint-soft: rgb(0 0 0 / var(--tint-soft-alpha));
+  --tint-line: rgb(0 0 0 / 0.1);
+  position: relative;
+  display: flex; flex-direction: column; justify-content: space-between;
+  border-radius: var(--r-tint);
+  overflow: hidden;
+  background: var(--tint);
+  box-shadow: 0 100px 100px -100px var(--tint);
+  color: var(--tint-ink);
+}
+.bs-tint.is-inverted {
+  --tint-ink: #ffffff;
+  --tint-soft: rgb(255 255 255 / var(--tint-soft-alpha-inverted));
+  --tint-line: rgb(255 255 255 / 0.2);
+}
+.bs-tint :focus-visible { outline-color: var(--tint-ink); }
+.bs-tint-body { padding: 1.5rem 1.5rem 0; }
+@media (min-width: 64rem) { .bs-tint-body { padding: 2.25rem 2rem 0 2.5rem; } }
+.bs-tint-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  min-height: 2.5rem;
+  margin-bottom: 1.25rem;
+}
+.bs-tint-name { font: 600 1.875rem/1 var(--font-sans); letter-spacing: -0.05em; }
+@media (min-width: 64rem) { .bs-tint-name { font-size: 2.375rem; } }
+.bs-tint-media { margin-top: 1rem; }
+@media (min-width: 64rem) { .bs-tint-media { margin-top: 2rem; } }
+.bs-tint-media > :where(img, video, svg) { width: 100%; height: auto; }
+
+/* Timeline list: a dated first line, then hollow bullets on a fading rule. */
+.bs-timeline {
+  position: relative;
+  padding: 0;
+  list-style: none;
+  font: 500 0.9375rem/1.3 var(--font-sans);
+  letter-spacing: -0.02em;
+}
+.bs-timeline::before {
+  content: "";
+  position: absolute; top: 1.125rem; left: 0.625rem;
+  width: 2px; height: 90%;
+  background: linear-gradient(var(--tint-line, var(--b-line)), transparent);
+}
+.bs-timeline li { position: relative; padding: 0 0 0.25rem 1.75rem; color: var(--tint-soft, var(--b-muted)); }
+.bs-timeline li::before {
+  content: "";
+  position: absolute; top: 0.5rem; left: 0.5rem;
+  width: 6px; height: 6px;
+  border: 1px solid var(--tint-ink, var(--b-ink));
+  border-radius: 50%;
+  background: var(--tint, var(--b-bg));
+}
+.bs-timeline li.is-date { display: flex; align-items: center; gap: 0.375rem; padding-left: 0; color: var(--tint-ink, var(--b-ink)); }
+.bs-timeline li.is-date::before { content: none; }
+.bs-timeline li.is-date svg { width: 1.375rem; height: 1.375rem; flex: none; }
+
+/* ------------------------------------------------------------------ dark card */
+
+/* A black card on the raised band: serif title, sub-title, faint body, and a
+   line illustration that fills the bottom. Square from 80rem. */
+.bs-dark-card {
+  position: relative;
+  display: flex; flex-direction: column; gap: 2.5rem;
+  padding-top: 2.5rem;
+  border-radius: var(--r-card);
+  overflow: clip;
+  background: var(--b-card);
+  box-shadow: 0 100px 100px -100px #000000;
+  color: var(--night-ink);
+  text-align: center;
+}
+@media (min-width: 80rem) { .bs-dark-card { aspect-ratio: 1; } }
+.bs-dark-card-text { position: relative; z-index: 1; display: grid; justify-items: center; }
+.bs-serif-title { font: 400 2.625rem/1.12 var(--font-serif); letter-spacing: -0.01em; }
+.bs-dark-card .bs-serif-title { margin-bottom: 1rem; }
+.bs-dark-card h4 { padding-inline: 1rem; margin-bottom: 0.75rem; font: 500 1.125rem/1.3 var(--font-sans); letter-spacing: -0.02em; }
+.bs-dark-card p { padding-inline: 1.75rem; max-width: 40rem; color: var(--night-muted); font: 400 1rem/1.3 var(--font-sans); letter-spacing: -0.02em; }
+.bs-dark-card-art { margin-top: auto; }
+
+/* Isometric illustrations come from iso.js as inline SVG. They follow the text
+   colour, and these properties re-colour them: --iso-ink (lines), --iso-surface
+   (the fill that hides what is behind a solid), --iso-hot (the lit part), and
+   --iso-soft (secondary green). See references/isometric.md. */
+.bs-page .iso { display: block; width: 100%; height: auto; overflow: visible; }
+.bs-dark-card .iso { --iso-surface: var(--b-card); }
+.bs-dark-card-art { overflow: hidden; }
+
+/* ------------------------------------------------------------------ carousel */
+
+/* Centred slides at two-thirds of the band (11/12 on phones). carousel.js marks the slide nearest the
+   centre .is-active; the others shrink to 80%. The track is a native scroller,
+   so touch, trackpad, and keyboard work without the script. */
+.bs-carousel-track {
+  display: flex; gap: 1.5rem;
+  margin-block: 1.25rem 2rem;
+  padding: 0 4.1667%;                  /* slides are 11/12 of the band */
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  list-style: none;
+}
+.bs-carousel-track::-webkit-scrollbar { display: none; }
+@media (min-width: 48rem) { .bs-carousel-track { gap: 2.5rem; margin-block: 3.5rem; padding-inline: 16.6667%; } }  /* 2/3 */
+.bs-slide {
+  position: relative;
+  flex: none;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-slide);
+  overflow: hidden;
+  scroll-snap-align: center;
+  background: var(--night-raised);
+  color: #ffffff;
+}
+.bs-slide > :where(img, video) { width: 100%; height: 100%; object-fit: cover; }
+.bs-slide::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgb(0 0 0 / 0.6), rgb(0 0 0 / 0.1) 50%, transparent);
+  pointer-events: none;
+}
+.bs-slide-caption {
+  position: absolute; left: 0; bottom: 0; z-index: 1;
+  padding: 1rem 1.25rem;
+  font: 600 1rem/1.2 var(--font-sans);
+}
+@media (min-width: 48rem) { .bs-slide-caption { padding: 2rem 2.5rem; font-size: 1.5625rem; } }
+.bs-slide-action { position: absolute; top: 50%; left: 50%; z-index: 2; translate: -50% -50%; }
+.bs-carousel.is-enhanced .bs-slide { scale: 0.8; transition: scale var(--dur) var(--ease-out); }
+.bs-carousel.is-enhanced .bs-slide.is-active { scale: 1; }
+.bs-carousel.is-enhanced .bs-slide-caption {
+  opacity: 0; transform: translateY(20px);
+  transition: opacity var(--dur) var(--ease-in), transform var(--dur) var(--ease-in);
+}
+.bs-carousel.is-enhanced .is-active .bs-slide-caption {
+  opacity: 1; transform: none;
+  transition: opacity 400ms var(--ease-out) 500ms, transform 400ms var(--ease-out) 500ms;
+}
+.bs-carousel-nav { display: flex; justify-content: center; gap: 1rem; }
+
+/* ------------------------------------------------------------------ rows, documents, tiles */
+
+/* List row: a white, softly shadowed row with a title, meta, and one action. */
+.bs-rows { display: grid; gap: 1rem; max-width: 56rem; margin-inline: auto; padding: 0; list-style: none; }
+.bs-rows-label { max-width: 56rem; margin: 0 auto 0.75rem; font: 600 1rem/1.5 var(--font-sans); }
+.bs-row {
+  display: grid; gap: 1.25rem;
+  padding: 1.5rem;
+  border-radius: var(--r-row);
+  background: var(--b-card);
+  box-shadow: var(--shadow-row);
+}
+@media (min-width: 48rem) {
+  .bs-row { grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 1.5rem 3rem; padding: 2rem; }
+}
+.bs-row h3 { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; font: 500 1.5625rem/1.2 var(--font-sans); }
+.bs-row h3 svg { width: 2rem; height: 2rem; flex: none; }
+.bs-row-meta { display: grid; gap: 1rem; font-size: 1rem; }
+.bs-row-meta > * { display: flex; align-items: center; gap: 0.375rem; }
+.bs-row-meta svg { width: 1.125rem; height: 1.125rem; flex: none; }
+.bs-row-action { display: grid; gap: 0.75rem; justify-items: start; font: 400 1rem/1.3 var(--font-sans); letter-spacing: -0.02em; }
+@media (min-width: 48rem) { .bs-row-action { justify-items: center; text-align: center; } }
+
+/* Document card: a black icon block with a lime icon, then title, line, link. */
+.bs-doc {
+  display: flex; gap: 1.5rem;
+  padding: 1.5rem;
+  border-radius: var(--r-card);
+  background: var(--b-card);
+  box-shadow: var(--shadow-doc);
+  color: var(--ink);
+}
+.bs-band.is-accent .bs-doc { color: #000000; }
+.bs-doc-icon {
+  display: grid; place-items: center;
+  flex: none;
+  width: 5rem; min-height: 6rem;
+  border-radius: var(--r-row);
+  background: #000000;
+  color: var(--accent);
+}
+@media (min-width: 48rem) { .bs-doc-icon { width: 7.5rem; min-height: 9.5rem; } }
+.bs-doc-icon svg { width: 2.5rem; height: 2.5rem; }
+.bs-doc-text { display: flex; flex-direction: column; gap: 0.5rem; min-width: 0; }
+.bs-doc h3 { font: 600 1.375rem/1.3 var(--font-sans); letter-spacing: -0.02em; }
+@media (min-width: 48rem) { .bs-doc h3 { font-size: 1.75rem; } }
+.bs-doc-text > :last-child { margin-top: auto; padding-top: 0.5rem; font-weight: 500; }
+
+/* Tile: a near-square with a line drawing and a two-line label. Alternate
+   lime and white. */
+.bs-tile {
+  display: grid; place-content: center; justify-items: center; gap: 1rem;
+  aspect-ratio: 1.1;
+  padding: 2.5rem;
+  border-radius: var(--r-card);
+  background: var(--b-card);
+  color: var(--b-ink);
+  font: 600 1.5rem/1.15 var(--font-sans);
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+.bs-tile.is-accent { background: var(--accent); color: var(--on-accent); }
+.bs-tile svg { width: min(11.75rem, 60%); height: auto; }
+
+/* A white card that leans. Set --tilt between -2deg and 2deg. */
+.bs-tilt { rotate: var(--tilt, 2deg); padding: 2rem; border-radius: var(--r-card); background: #ffffff; color: #000000; }
+
+/* The feature card on the accent band: white, very round, fading out at the
+   bottom. Put a large figure and a quote stack inside. */
+.bs-feature {
+  display: grid; justify-items: center;
+  padding: 1.5rem 3rem 0;
+  border-radius: var(--r-feature);
+  background: #ffffff;
+  color: #000000;
+  text-align: center;
+  -webkit-mask-image: linear-gradient(#000 70%, transparent);
+  mask-image: linear-gradient(#000 70%, transparent);
+}
+.bs-feature-num { margin-block: 0.75rem; font: 400 4.1875rem/0.93 var(--font-sans); letter-spacing: -0.04em; }
+.bs-feature-num sup { padding: 2px 0 0 6px; font: 500 1.375rem/1.36 var(--font-sans); letter-spacing: -0.02em; vertical-align: top; }
+.bs-caption { font: 600 1.375rem/1.36 var(--font-sans); letter-spacing: -0.02em; text-align: center; }
+
+/* ------------------------------------------------------------------ footer */
+
+.bs-footer {
+  position: relative;
+  padding: 3.5rem var(--gutter-tight) 2.25rem;
+  background: var(--night);
+  color: var(--night-ink);
+}
+.bs-footer-cols {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3rem 1.5rem;
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--night-line);
+}
+.bs-footer-cols > * { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+.bs-footer-cols > .is-wide { grid-column: 1 / -1; }
+@media (min-width: 64rem) {
+  .bs-footer-cols { display: flex; gap: 5.5rem; }
+  .bs-footer-cols > .is-wide { max-width: 30rem; margin-left: auto; }
+}
+.bs-footer .bs-label { margin-bottom: 0.25rem; color: var(--night-label); }
+.bs-footer a { font: 400 1.0625rem/1.3 var(--font-sans); letter-spacing: -0.02em; text-underline-offset: 2px; }
+.bs-footer a[aria-current] { text-decoration: underline; }
+@media (hover: hover) { .bs-footer a:hover { text-decoration: underline; } }
+.bs-legal { margin-bottom: 1rem; color: var(--night-label); font: 400 0.875rem/1.3 var(--font-sans); letter-spacing: -0.02em; }
+.bs-footer-mark { max-width: var(--wrap); margin-inline: auto; padding-top: 2.5rem; overflow: hidden; }
+/* Your own logotype, full width. reveal.js slides it down from behind the rule. */
+.bs-wordmark { padding-top: 1.5rem; }
+.bs-wordmark > :where(svg, img) { width: 100%; height: auto; }
+.bs-wordmark text { font: 500 200px var(--font-sans); fill: currentColor; }
+.bs-tagline { font: 400 clamp(1.25rem, 3.47vw, 3.125rem)/1.2 var(--font-sans); letter-spacing: -0.02em; }
+
+/* ------------------------------------------------------------------ reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .bs-page *, .bs-page *::before, .bs-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+  .bs-rise.is-armed { opacity: 1; transform: none; }
+  .bs-carousel.is-enhanced .bs-slide { scale: 1; }
+  .bs-carousel.is-enhanced .bs-slide-caption { opacity: 1; transform: none; }
+}
