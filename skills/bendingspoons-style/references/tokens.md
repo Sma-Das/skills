@@ -166,7 +166,7 @@ Breakpoints on the source: 640, 768, 1024, 1280, and 1440px. The skill uses 48re
 | Card video | plays while at least 10% is on screen, paused otherwise | IntersectionObserver |
 | Dark-card art | Lottie line animation, looped, playing only while on screen | lottie-react |
 
-The skill's scripts reproduce the first nine rows with no dependencies. `--ease-out` is `power2.out` exactly as a cubic bezier. `--ease-back` approximates `back.out(1.3)`. The skill's carousel uses native scroll snapping, so it does not loop. The lime-band drift, card video, and Lottie art are not shipped: use a still drawing, or the project's own video with the same rule of playing only while visible.
+The skill's scripts reproduce the first nine rows with no dependencies. `--ease-out` is `power2.out` exactly as a cubic bezier. `--ease-back` approximates `back.out(1.3)`. The skill's carousel uses native scroll snapping, so it does not loop. The lime-band drift and card video are not shipped: use the project's own video with the same rule of playing only while visible. The Lottie art is replaced by [iso.js](../assets/js/iso.js), which draws scenes in the same style with the same loop timing. The [isometric guide](isometric.md) records what was measured from the Lottie files.
 
 ## Not measured
 

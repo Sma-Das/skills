@@ -67,6 +67,7 @@ npx skills add Sma-Das/skills --skill xyne-style
 - figures that rise in, and a footer wordmark that slides out from behind its rule
 - a nav that switches colour to match the band under it
 - a centred carousel built on native scroll snapping
+- isometric line illustrations drawn from short scene descriptions by a small renderer, with a [guide](skills/bendingspoons-style/references/isometric.md) for drawing any subject
 
 The source page fails WCAG AA on card bullets and footer labels, so the tokens darken them. `data-fidelity="exact"` restores the original values. The skill applies the visual language to your own product. It doesn't copy Bending Spoons' logo, product names, photography, or copy.
 
@@ -79,6 +80,8 @@ npx skills add Sma-Das/skills --skill bendingspoons-style
 | ![Bending Spoons style pastel cards, light](skills/bendingspoons-style/assets/specimen-light.png) | ![Bending Spoons style pastel cards, dark](skills/bendingspoons-style/assets/specimen-dark.png) |
 | ![Bending Spoons style hero with the card ring](skills/bendingspoons-style/assets/hero.png) | ![Bending Spoons style black cards with wireframe illustrations](skills/bendingspoons-style/assets/systems.png) |
 | ![Bending Spoons style lime band with the feature card](skills/bendingspoons-style/assets/accent.png) | ![Bending Spoons style carousel](skills/bendingspoons-style/assets/talks.png) |
+| ![Bending Spoons style statement text coming into focus](skills/bendingspoons-style/assets/statement.png) | ![Bending Spoons style isometric scenes on black](skills/bendingspoons-style/assets/isometric-dark.png) |
+| ![Bending Spoons style isometric scenes on lime](skills/bendingspoons-style/assets/isometric-lime.png) | ![Bending Spoons style isometric scenes on white](skills/bendingspoons-style/assets/isometric-light.png) |
 
 ### Morphing icons
 
@@ -144,7 +147,7 @@ Generated, fictional data only.
 | ![Hairline UI, dark theme](skills/hairline-ui/assets/specimen-dark.png) | ![Hairline UI, light theme](skills/hairline-ui/assets/specimen-light.png) |
 | ![SVG charts, dark theme](skills/hairline-charts/assets/specimen-dark.png) | ![SVG charts, light theme](skills/hairline-charts/assets/specimen-light.png) |
 
-The interactive specimens use ES modules and must be served over HTTP. Serve the `skills/` directory on an address appropriate for your environment, then open `hairline-ui/assets/specimen.html`, `hairline-charts/assets/specimen.html`, `hairline-motion/assets/demo.html`, `xyne-style/assets/specimen.html`, `bendingspoons-style/assets/specimen.html`, `morphing-icons/assets/sequencer.html`, or `little-touches/assets/demo.html`. Keep sibling skill folders together for their relative asset imports.
+The interactive specimens use ES modules and must be served over HTTP. Serve the `skills/` directory on an address appropriate for your environment, then open `hairline-ui/assets/specimen.html`, `hairline-charts/assets/specimen.html`, `hairline-motion/assets/demo.html`, `xyne-style/assets/specimen.html`, `bendingspoons-style/assets/specimen.html`, `bendingspoons-style/assets/isometric.html`, `morphing-icons/assets/sequencer.html`, or `little-touches/assets/demo.html`. Keep sibling skill folders together for their relative asset imports.
 
 ## Development
 
@@ -154,6 +157,7 @@ node --test skills/hairline-charts/assets/js/layout.test.mjs
 node skills/hairline-ui/scripts/palette.mjs --all
 node --test skills/morphing-icons/assets/js/icons.test.mjs
 node skills/morphing-icons/scripts/audit.mjs --strict
+node --test skills/bendingspoons-style/assets/js/iso.test.mjs
 bash skills/hairline-stack/scripts/scaffold.sh /tmp/hairline-example example.com/hairline-example "Example dashboard"
 cd /tmp/hairline-example/web/ui
 npm install

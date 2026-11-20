@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Isometric illustration gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fragment+Mono&family=Instrument+Sans:wght@400..700&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="bendingspoons.css">
+<style>
+  html, body { margin: 0; background: #000; }
+  .first { padding-top: calc(var(--nav-h) + 4rem); }
+  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr)); gap: 1.5rem; }
+  .shot { margin: 0; border-radius: var(--r-card); overflow: hidden; background: var(--b-card); box-shadow: 0 100px 100px -100px #000; }
+  .shot figcaption { display: flex; justify-content: space-between; gap: 1rem; padding: 1.25rem 1.5rem 0; }
+  .shot .art { aspect-ratio: 652 / 400; }
+  .is-accent .shot, .on-white .shot { box-shadow: none; }
+  .is-accent .shot { background: transparent; outline: 1px solid rgb(0 0 0 / 0.15); }
+  .on-white { --b-bg: #fff; --b-ink: #000; --b-em: #000; --b-muted: rgb(0 0 0 / 0.6); }
+  .on-white .shot { background: #fff; outline: 1px solid #d4d4d4; }
+</style>
+</head>
+<body>
+<div class="bs-page">
+  <nav class="bs-nav" data-theme="dark" aria-label="Main">
+    <div class="bs-nav-inner">
+      <a class="bs-logo" href="specimen.html">Second Reel</a>
+      <a class="bs-nav-cta" href="specimen.html">Back to the specimen</a>
+    </div>
+  </nav>
+  <main>
+    <section class="bs-band is-raised first" data-nav-theme="dark">
+      <div class="bs-wrap is-tight">
+        <div class="bs-head">
+          <h1 class="bs-title"><em class="bs-em">Isometric</em> scenes</h1>
+          <p class="bs-lede">Every drawing on this page is a short scene description rendered by iso.js. The same scenes are drawn three times: on black, on lime, and on white.</p>
+        </div>
+        <div class="gallery" data-gallery="dark"></div>
+      </div>
+    </section>
+    <section class="bs-band is-accent" data-nav-theme="accent">
+      <div class="bs-wrap is-tight">
+        <div class="bs-head"><h2 class="bs-title">On lime</h2></div>
+        <div class="gallery" data-gallery="lime"></div>
+      </div>
+    </section>
+    <section class="bs-band on-white" data-nav-theme="light">
+      <div class="bs-wrap is-tight">
+        <div class="bs-head"><h2 class="bs-title">On white</h2></div>
+        <div class="gallery" data-gallery="light"></div>
+      </div>
+    </section>
+  </main>
+</div>
+<script type="module">
+  import { mount } from "./js/iso.js";
+  import { scenes } from "./js/iso-scenes.js";
+  import { navTheme } from "./js/nav-theme.js";
+
+  const params = new URLSearchParams(location.search);
+  if (params.get("theme")) document.documentElement.dataset.theme = params.get("theme");
+  const only = params.get("scene");
+
+  for (const gallery of document.querySelectorAll("[data-gallery]")) {
+    for (const [name, scene] of Object.entries(scenes)) {
+      if (only && only !== name) continue;
+      const figure = document.createElement("figure");
+      figure.className = "shot";
+      figure.innerHTML = `<figcaption><span class="bs-label">${name}</span><span class="bs-label bs-muted">${scene.items.length} items</span></figcaption><div class="art"></div>`;
+      mount(figure.querySelector(".art"), { ...scene, theme: gallery.dataset.gallery });
+      gallery.append(figure);
+    }
+  }
+  navTheme(document.querySelector(".bs-nav"));
+</script>
+</body>
+</html>

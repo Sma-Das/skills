@@ -1,6 +1,6 @@
 ---
 name: bendingspoons-style
-description: "Restyle a product or marketing site in the bendingspoons.com design language: full-bleed black, white, and lime bands, a tight grotesque with serif-italic emphasis, very round pastel cards, wireframe illustrations, and blur-in scroll motion."
+description: "Restyle a product or marketing site in the bendingspoons.com design language: full-bleed black, white, and lime bands, a tight grotesque with serif-italic emphasis, very round pastel cards, isometric line illustrations, and blur-in scroll motion."
 ---
 
 # Bending Spoons style
@@ -70,16 +70,16 @@ The source uses four kinds of image. Keep the kinds and supply your own content.
 
 - **Brand tiles** in the hero ring: one flat colour or one looping clip per card, with a single name or mark in the middle.
 - **Product UI** at the bottom of a pastel card, bleeding off the bottom edge, often on a white or black panel with rounded top corners.
-- **Wireframe illustrations** on the dark cards: isometric plates, cubes, rings, and domes in 1px white lines at 16 to 40% with one or two lime parts and a soft lime glow. The `.bs-wire` classes set the strokes. On lime and white, the same drawings use black lines.
+- **Isometric line illustrations** on the dark cards: one hero solid and one repeated supporting shape, drawn on a 30 degree grid in 1px white lines, with a faint floor that runs off the card, one part lit in lime, and a soft glow under it. Build them with [iso.js](assets/js/iso.js) from a short scene description, not by hand. The [isometric guide](references/isometric.md) has the principles, the scene format, seven composition patterns, and a method for drawing any subject. On lime and white, the same scenes render in black lines.
 - **Photographs** only in carousels and galleries, cropped 16:9 with 40px corners and a dark fade under the caption.
 
 Don't use stock illustration, 3D renders, mesh gradients, or icons in colour. Icons are 1.5px line icons in the text colour, or lime on a black block.
 
 ## Apply it
 
-1. Copy [bendingspoons.css](assets/bendingspoons.css) and the scripts ([ring.js](assets/js/ring.js), [reveal.js](assets/js/reveal.js), [nav-theme.js](assets/js/nav-theme.js), [carousel.js](assets/js/carousel.js)) into the project, or translate the tokens into its existing system (Tailwind theme, CSS modules, design tokens). Load the three fonts from Google Fonts, or self-host them. They are under the SIL Open Font License.
+1. Copy [bendingspoons.css](assets/bendingspoons.css) and the scripts ([ring.js](assets/js/ring.js), [reveal.js](assets/js/reveal.js), [nav-theme.js](assets/js/nav-theme.js), [carousel.js](assets/js/carousel.js), [iso.js](assets/js/iso.js)) into the project, or translate the tokens into its existing system (Tailwind theme, CSS modules, design tokens). Load the three fonts from Google Fonts, or self-host them. They are under the SIL Open Font License.
 2. Wrap the page in `.bs-page`. Make each section a `.bs-band` with one of `.is-dark`, `.is-raised`, `.is-soft`, `.is-accent`, or no modifier for white, and put a `.bs-wrap` inside it. Give each band `data-nav-theme="dark"`, `"light"`, or `"accent"` so the nav can follow it.
 3. Map the product's content onto the band sequence: hero with a mixed line, figures, a three-paragraph statement, pastel cards, dark cards, a carousel, a lime band with one button, the footer. Choose the italic words and the lime phrases. Write your own copy for all of it.
-4. Give each card its own `--tint` and its own image. Draw one wireframe per dark card. Use the user's logotype for the nav and the footer wordmark.
+4. Give each card its own `--tint` and its own image. For each dark card, follow the [isometric guide](references/isometric.md): name the idea, pick a pattern, write the scene, and mount it with `iso.js` or write a static SVG with `node scripts/iso-render.mjs`. Use a different pattern on each card. Use the user's logotype for the nav and the footer wordmark.
 5. For app screens rather than marketing pages, keep the type roles, the pill buttons, the large radii, the pastel tints as category colours, and lime as the single accent. Drop the bands, the ring, and the scroll effects. The [component recipes](references/components.md) cover the nav, cards, rows, tiles, buttons, and footer.
-6. Check the result against [the specimen](assets/specimen.html) in light, dark, and at 390px wide. Confirm that each band holds one idea, that no line has more than two italic words, that lime text never sits on a light background, that no tint repeats, that nothing scrolls horizontally, that the page reads with scripts off and with reduced motion, and that focus is visible on every control.
+6. Check the result against [the specimen](assets/specimen.html) and [the illustration gallery](assets/isometric.html) in light, dark, and at 390px wide. Confirm that each band holds one idea, that no line has more than two italic words, that lime text never sits on a light background, that no tint repeats, that each illustration has one lit part, that nothing scrolls horizontally, that the page reads with scripts off and with reduced motion, and that focus is visible on every control.

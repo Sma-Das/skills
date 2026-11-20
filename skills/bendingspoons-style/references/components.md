@@ -126,15 +126,22 @@ For a row of small figures, use `.bs-figure` with a `<b>` numeral and a caption.
     <h4>Print and file booking</h4>
     <p>One sentence that says what it does.</p>
   </div>
-  <div class="bs-dark-card-art"><svg class="bs-wire" viewBox="0 0 652 400">…</svg></div>
+  <div class="bs-dark-card-art" data-iso="stack"></div>
 </article>
+```
+
+```js
+import { mount } from "./js/iso.js";
+import { scenes } from "./js/iso-scenes.js";
+for (const el of document.querySelectorAll("[data-iso]")) mount(el, scenes[el.dataset.iso]);
 ```
 
 - Lay the cards out in `.bs-grid-2.is-snug` on an `.is-raised` band. Each is square from 1280px up.
 - The title is a name in upright serif. The sub-title says what kind of thing it is in two to four words. The body is one sentence of about 25 words.
-- Draw the art as an isometric wireframe in a 652 by 400 box, anchored to the bottom. Inside `.bs-wire`, plain shapes get a white 40% hairline. Add `.is-faint` for construction lines, `.is-dashed` for hidden edges, `.is-fill` for a 5% face, `.is-accent` or `.is-fill-accent` for the one lit part, and one blurred `.is-glow` ellipse behind it.
-- Good subjects: stacked plates, a cube ringed by smaller cubes, rings widening from a point, a sphere under a dome, a chip with traces. One idea per card.
-- On a lime or white surface, add `.is-on-light` and the same drawing uses black lines.
+- The art is an isometric scene in a 652 by 400 box, anchored to the bottom so it runs off the card's lower edge. Write the scene with [iso.js](../assets/js/iso.js) and the [isometric guide](isometric.md): one hero, one repeated supporting shape, a faint floor, one lit part.
+- To ship the art without scripts, write it to a file with `node scripts/iso-render.mjs scene.json art.svg` and inline the SVG.
+- Use a different composition pattern on each card in a grid.
+- On the lime band or on white, pass `theme: "lime"` or `theme: "light"` and the same scene draws in black lines.
 
 ## Carousel
 
